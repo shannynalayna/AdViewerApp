@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Ad View</string>
+    <string name="image">Ad</string>
+    <string name="ad_activity">Ad Activity</string>
+</resources>
