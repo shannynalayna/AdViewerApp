@@ -1,9 +1,6 @@
 package satel.adsviewer;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,8 +13,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecyclerViewAdapter.ViewHolder> {
@@ -46,7 +41,6 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
         Log.i("AdBlock Adapter", "At this URL: " + context);
         try {
             Picasso.with(context).load(ad.getImageUrl()).into(holder.card_image);
-            holder.card_title.setText(ad.getDescription());
             holder.card_content.setText(ad.getContent());
 
         } catch (Exception e) {

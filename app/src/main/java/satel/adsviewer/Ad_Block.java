@@ -117,7 +117,7 @@ public class Ad_Block implements Serializable {
     }
 
     public String getContent() {
-        return price + "\n" + location;
+        return price.getValue() + " \n " + location;
     }
 
 }
