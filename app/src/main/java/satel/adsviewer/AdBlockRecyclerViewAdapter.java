@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -42,6 +43,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
         try {
             Picasso.with(context).load(ad.getImageUrl()).into(holder.card_image);
             holder.card_content.setText(ad.getContent());
+            holder.card_title.setText(ad.getDescription());
 
         } catch (Exception e) {
             Log.e("AdBlock Adapter", "Error with creating Drawable with " + e.toString());
@@ -67,8 +69,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
         public TextView card_title;
         public TextView card_content;
         public ImageView card_image;
-        public LinearLayout cardLinearLayout;
-        public LinearLayout textLinearLayout;
+        public RelativeLayout cardRelativeLayout;
 
 
         public ViewHolder(View v) {
@@ -79,8 +80,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
             card_title = (TextView) v.findViewById(R.id.card_title);
             card_content = (TextView) v.findViewById(R.id.card_content);
             card_image = (ImageView) v.findViewById(R.id.card_image);
-            cardLinearLayout = (LinearLayout) v.findViewById(R.id.card_linearLayout);
-            textLinearLayout = (LinearLayout) v.findViewById(R.id.card_text_linearLayout);
+            cardRelativeLayout = (RelativeLayout) v.findViewById(R.id.card_relative_layout);
         }
     }
 
