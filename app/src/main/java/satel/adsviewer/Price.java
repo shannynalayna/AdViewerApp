@@ -1,14 +1,11 @@
 package satel.adsviewer;
 
-import android.arch.persistence.room.Entity;
-
 import java.io.Serializable;
 
 /**
  * Created by satel on 3/25/2018.
  */
 
-@Entity
 public class Price implements Serializable {
 
     private int value;

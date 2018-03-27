@@ -1,6 +1,7 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -37,18 +39,23 @@ public class Ad_Activity extends AppCompatActivity {
 
     private RequestQueue reqQueue;
     private Gson gson;
-    private List<Ad_Block> ads;
+
+    private static List<Ad_Block> ads;
+    private static List<Ad_Block> favorites;
+
 
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
     private RecyclerView.LayoutManager AdLayoutManager;
 
 
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ad_);
+        setContentView(R.layout.ad_activity_layout);
+        Log.i("Init: " , "Here is that id: " + this.findViewById(R.id.recyclerViewList));
 
         reqQueue = Volley.newRequestQueue(this);
 
@@ -58,22 +65,13 @@ public class Ad_Activity extends AppCompatActivity {
         fetchAds();
 
         AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
-
+        Log.i("Init Recycler view: ", AdRecyclerView.toString());
         // Using a linear Layout Manager
+
         AdLayoutManager = new LinearLayoutManager(this);
+        Log.i("Init Recycler view: ", AdLayoutManager.toString());
+
         AdRecyclerView.setLayoutManager(AdLayoutManager);
-
-        // Specifying an adapter, need a listener
-        //TODO: Figure out this whole listener business
-        AdAdapter = new AdBlockRecyclerViewAdapter(ads, Listener);
-        AdRecyclerView.setAdapter(AdAdapter);
-
-
-        //TODO: Figure out how to display the images from the urls
-
-
-        TextView textView = findViewById(R.id.textView01);
-        textView.setText("We've fetched the ads");
     }
 
     private void fetchAds() {
@@ -86,16 +84,32 @@ public class Ad_Activity extends AppCompatActivity {
 
         @Override
         public void onResponse(String resp) {
-            //
+
             try {
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
                 ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
+
+                for (int i = 0; i < ads.size(); i++ ) {
+                    Ad_Block ad = ads.get(i);
+                    if(ad.getDescription() == null || ad.getLocation() == null ||
+                            ad.getImageUrl() == null) {
+                        ads.remove(i);
+                    }
+                }
                 Log.i("Ad_Activity", "Ads loaded: " + ads.size());
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
 
-               // for (Ad_Block ad : ads) {
-               // }
+
+                AdAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext());
+                Log.i("Ad_Activity", "AdAdapter loaded");
+                AdRecyclerView.setAdapter(AdAdapter);
+
+
+
+
+                // for (Ad_Block ad : ads) {
+                // }
             } catch (JSONException e) {
                 Log.e("Ad_Activity", "Error saving ads");
                 e.printStackTrace();
@@ -107,14 +121,9 @@ public class Ad_Activity extends AppCompatActivity {
 
         @Override
         public void onErrorResponse(VolleyError err) {
-            Log.e("activity_ad_", err.toString());
+            Log.e("ad_activity_layout", err.toString());
         }
     };
-
-    public void onClick(View v) {
-        startActivity(new Intent(this, Ad_Activity.class));
-        finish();
-    }
 
 
 

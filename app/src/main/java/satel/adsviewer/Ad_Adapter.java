@@ -17,9 +17,10 @@ import java.util.List;
 public class Ad_Adapter extends ArrayAdapter<Ad_Block> implements Filterable {
 
     public List<Ad_Block> ads;
+    private Context context;
 
     public Ad_Adapter(@NonNull Context context, int resource, @NonNull List<Ad_Block> ads) {
-        super(context, R.layout.activity_ad_, ads);
+        super(context, R.layout.ad_activity_layout, ads);
         this.ads = ads;
     }
 

@@ -1,6 +1,5 @@
 package satel.adsviewer;
 
-import android.arch.persistence.room.Entity;
 
 import java.io.Serializable;
 
@@ -8,7 +7,7 @@ import java.io.Serializable;
  * Created by satel on 3/25/2018.
  */
 
-@Entity
+
 public class imageUrl implements Serializable {
 
 
