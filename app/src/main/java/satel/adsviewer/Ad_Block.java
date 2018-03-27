@@ -9,6 +9,7 @@ import java.io.Serializable;
  * Created by satel on 3/25/2018.
  */
 
+//TODO: add default values for all variables that might be null
 public class Ad_Block implements Serializable {
 
     @SerializedName("image") // Used to parse JSON
@@ -117,7 +118,7 @@ public class Ad_Block implements Serializable {
     }
 
     public String getContent() {
-        return price.getValue() + " \n " + location;
+        return price.getValue() + ",- in " + location;
     }
 
 }
