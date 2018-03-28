@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -22,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,6 +49,15 @@ public class Ad_Activity extends AppCompatActivity {
 
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actionmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +72,12 @@ public class Ad_Activity extends AppCompatActivity {
 
         adLoading.setVisibility(View.VISIBLE);
 
+        Arrays[] favorites;
+        favorites = new Arrays[1];
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
         fetchAds();
-
 
         AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
         Log.i("Init Recycler view: ", AdRecyclerView.toString());
@@ -96,6 +111,7 @@ public class Ad_Activity extends AppCompatActivity {
                         ads.remove(i);
                     }
                 }
+
                 Log.i("Ad_Activity", "Ads loaded: " + ads.size());
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
                 adLoading.setVisibility(View.GONE);
@@ -105,11 +121,6 @@ public class Ad_Activity extends AppCompatActivity {
                 Log.i("Ad_Activity", "AdAdapter loaded");
                 AdRecyclerView.setAdapter(AdAdapter);
 
-
-
-
-                // for (Ad_Block ad : ads) {
-                // }
             } catch (JSONException e) {
                 Log.e("Ad_Activity", "Error saving ads");
                 e.printStackTrace();
@@ -125,6 +136,30 @@ public class Ad_Activity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_favorite:
+                try {
+                    favorites = new ArrayList<Ad_Block>(1);
+                    favorites.add(ads.get(0));
+                    //TODO: Dynamically create favorites list in order to view right content
+
+
+                    AdAdapter = new AdBlockRecyclerViewAdapter(favorites, getApplicationContext());
+                    Log.i("Ad_Activity", "AdAdapter loaded");
+                    AdRecyclerView.setAdapter(AdAdapter);
+                } catch (Exception e) {
+                    Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
+                    e.printStackTrace();
+                }
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
 
