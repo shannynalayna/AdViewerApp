@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 
 import com.android.volley.Request;
@@ -48,7 +49,6 @@ public class Ad_Activity extends AppCompatActivity {
     private RecyclerView.LayoutManager AdLayoutManager;
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -63,17 +63,18 @@ public class Ad_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ad_activity_layout);
-        Log.i("Init: " , "Here is that id: " + this.findViewById(R.id.recyclerViewList));
+        Log.i("Init: ", "Here is that id: " + this.findViewById(R.id.recyclerViewList));
 
 
         reqQueue = Volley.newRequestQueue(this);
 
-        adLoading = (ProgressBar)findViewById(R.id.adProgressBar);
+        adLoading = (ProgressBar) findViewById(R.id.adProgressBar);
 
         adLoading.setVisibility(View.VISIBLE);
 
         Arrays[] favorites;
         favorites = new Arrays[1];
+
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -103,14 +104,6 @@ public class Ad_Activity extends AppCompatActivity {
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
                 ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
-
-                for (int i = 0; i < ads.size(); i++ ) {
-                    Ad_Block ad = ads.get(i);
-                    if(ad.getDescription() == null || ad.getLocation() == null ||
-                            ad.getImageUrl() == null) {
-                        ads.remove(i);
-                    }
-                }
 
                 Log.i("Ad_Activity", "Ads loaded: " + ads.size());
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
@@ -142,11 +135,15 @@ public class Ad_Activity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
-                    favorites = new ArrayList<Ad_Block>(1);
-                    favorites.add(ads.get(0));
-                    //TODO: Dynamically create favorites list in order to view right content
+                    favorites = new ArrayList<Ad_Block>();
 
-
+                    adLoading.setVisibility(View.VISIBLE);
+                    for(Ad_Block ad : ads) {
+                        if(ad.getIsFavorited()) {
+                            favorites.add(ad);
+                        }
+                    }
+                    adLoading.setVisibility(View.GONE);
                     AdAdapter = new AdBlockRecyclerViewAdapter(favorites, getApplicationContext());
                     Log.i("Ad_Activity", "AdAdapter loaded");
                     AdRecyclerView.setAdapter(AdAdapter);
@@ -160,7 +157,4 @@ public class Ad_Activity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-
 }

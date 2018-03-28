@@ -1,6 +1,10 @@
 package satel.adsviewer;
 
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -10,20 +14,27 @@ import java.io.Serializable;
  */
 
 //TODO: add default values for all variables that might be null
+
+@Entity(tableName = "adsDataBase")
 public class Ad_Block implements Serializable {
 
     @SerializedName("image") // Used to parse JSON
-    private imageUrl imageUrl;
+    private imageUrl imageUrl = new imageUrl();
+
+    @ColumnInfo(name = "price_value")
+    private Price price = new Price();
+
+    @ColumnInfo(name = "title")
+    private String description = "No Description Available";
 
 
-    private Price price;
-    private String description;
-    private String location;
+    private String location = "No Location Available";
 
+    @PrimaryKey
     @SerializedName("id") // Used to parse JSON
     private String imageID;
 
-    private int isFavorited = 0;
+    private boolean isFavorited = false;
 
     public Ad_Block() {
     }
@@ -38,7 +49,7 @@ public class Ad_Block implements Serializable {
     }
 
     public Ad_Block(imageUrl imageUrl, Price price, String description,
-                    String location, String title, int isFavorited,
+                    String location, String title, boolean isFavorited,
                     String imageID) {
         this.imageUrl = imageUrl;
         this.price = price;
@@ -109,11 +120,11 @@ public class Ad_Block implements Serializable {
         this.location = location;
     }
 
-    public int getIsFavorited() {
+    public boolean getIsFavorited() {
         return isFavorited;
     }
 
-    public void setIsFavorited(int isFavorited) {
+    public void setIsFavorited(boolean isFavorited) {
         this.isFavorited = isFavorited;
     }
 
