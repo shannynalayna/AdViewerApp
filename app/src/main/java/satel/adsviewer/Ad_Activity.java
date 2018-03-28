@@ -1,19 +1,13 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -43,6 +37,7 @@ public class Ad_Activity extends AppCompatActivity {
     private static List<Ad_Block> ads;
     private static List<Ad_Block> favorites;
 
+    private ProgressBar adLoading;
 
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
@@ -57,12 +52,17 @@ public class Ad_Activity extends AppCompatActivity {
         setContentView(R.layout.ad_activity_layout);
         Log.i("Init: " , "Here is that id: " + this.findViewById(R.id.recyclerViewList));
 
+
         reqQueue = Volley.newRequestQueue(this);
 
+        adLoading = (ProgressBar)findViewById(R.id.adProgressBar);
+
+        adLoading.setVisibility(View.VISIBLE);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
         fetchAds();
+
 
         AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
         Log.i("Init Recycler view: ", AdRecyclerView.toString());
@@ -84,7 +84,6 @@ public class Ad_Activity extends AppCompatActivity {
 
         @Override
         public void onResponse(String resp) {
-
             try {
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
@@ -99,6 +98,7 @@ public class Ad_Activity extends AppCompatActivity {
                 }
                 Log.i("Ad_Activity", "Ads loaded: " + ads.size());
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
+                adLoading.setVisibility(View.GONE);
 
 
                 AdAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext());
