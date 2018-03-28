@@ -17,8 +17,6 @@
         card_view:cardUseCompatPadding="true"
         tools:context="satel.adsviewer.Ad_Activity">
 
-        <!-- TODO: Figure out the layout so that I can actually see all the text -->
-
         <RelativeLayout
             android:id="@+id/card_relative_layout"
             android:layout_width="match_parent"
@@ -39,7 +37,6 @@
                 android:layout_marginTop="10dp"
                 android:contentDescription="@string/adImage"
                 android:foregroundGravity="fill_horizontal"
-                android:tag="image_tag"
                 tools:context="satel.adsviewer.Ad_Activity" />
 
             <!-- Change the color of the text HERE -->
@@ -80,7 +77,6 @@
                 android:layout_alignTop="@+id/card_content"
                 android:checked="false"
                 android:text="@string/addFavorite"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:visibility="visible" />
         </RelativeLayout>
 
