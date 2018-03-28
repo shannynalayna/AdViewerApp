@@ -149,7 +149,7 @@ public class Ad_DatabaseHandler {
         ad.setLocation(cursor.getString(cursor.getColumnIndex(COLUMN_AD_LOCATION)));
         ad.setDescription(cursor.getString(cursor.getColumnIndex(COLUMN_AD_DESCRIPTION)));
         String isFavorited = cursor.getString(cursor.getColumnIndex(COLUMN_AD_ISFAVORITED));
-        ad.setIsFavorited(Integer.valueOf(isFavorited));
+        ad.setIsFavorited(Boolean.parseBoolean(isFavorited));
         return ad;
     }
 
