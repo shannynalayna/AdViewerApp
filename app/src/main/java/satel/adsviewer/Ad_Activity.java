@@ -1,16 +1,16 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ProgressBar;
 
 import com.android.volley.Request;
@@ -42,11 +42,13 @@ public class Ad_Activity extends AppCompatActivity {
     private static List<Ad_Block> ads;
     private static List<Ad_Block> favorites;
 
+    private Boolean favoriteView = false;
+
     private ProgressBar adLoading;
 
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
-    private RecyclerView.LayoutManager AdLayoutManager;
+    private RecyclerView.Adapter favAdAdapter;
 
 
     @Override
@@ -65,15 +67,13 @@ public class Ad_Activity extends AppCompatActivity {
         setContentView(R.layout.ad_activity_layout);
         Log.i("Init: ", "Here is that id: " + this.findViewById(R.id.recyclerViewList));
 
-
         reqQueue = Volley.newRequestQueue(this);
 
         adLoading = (ProgressBar) findViewById(R.id.adProgressBar);
 
         adLoading.setVisibility(View.VISIBLE);
 
-        Arrays[] favorites;
-        favorites = new Arrays[1];
+        favorites = new ArrayList<Ad_Block>();
 
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -82,12 +82,7 @@ public class Ad_Activity extends AppCompatActivity {
 
         AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
         Log.i("Init Recycler view: ", AdRecyclerView.toString());
-        // Using a linear Layout Manager
 
-        AdLayoutManager = new LinearLayoutManager(this);
-        Log.i("Init Recycler view: ", AdLayoutManager.toString());
-
-        AdRecyclerView.setLayoutManager(AdLayoutManager);
     }
 
     private void fetchAds() {
@@ -95,6 +90,8 @@ public class Ad_Activity extends AppCompatActivity {
                 onAdsLoaded, onAdsError);
         reqQueue.add(req);
     }
+
+
 
     private final Response.Listener<String> onAdsLoaded = new Response.Listener<String>() {
 
@@ -104,15 +101,17 @@ public class Ad_Activity extends AppCompatActivity {
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
                 ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
-
                 Log.i("Ad_Activity", "Ads loaded: " + ads.size());
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
                 adLoading.setVisibility(View.GONE);
 
 
-                AdAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext());
+                AdAdapter = new AdBlockRecyclerViewAdapter(adsDatabase.AdDao().loadAllAds(),
+                                        getApplicationContext(), favoriteView);
                 Log.i("Ad_Activity", "AdAdapter loaded");
                 AdRecyclerView.setAdapter(AdAdapter);
+                //TODO: Determine best place to put this
+
 
             } catch (JSONException e) {
                 Log.e("Ad_Activity", "Error saving ads");
@@ -135,18 +134,27 @@ public class Ad_Activity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
-                    favorites = new ArrayList<Ad_Block>();
 
-                    adLoading.setVisibility(View.VISIBLE);
-                    for(Ad_Block ad : ads) {
-                        if(ad.getIsFavorited()) {
-                            favorites.add(ad);
-                        }
+                    if(favoriteView == false) {
+
+                        favoriteView = true;
+                        adLoading.setVisibility(View.VISIBLE);
+
+
+                // TODO: IMPLEMENT THAT FUCKING DATABASE
+                        adLoading.setVisibility(View.GONE);
+                        favAdAdapter = new AdBlockRecyclerViewAdapter(adsDatabase.AdDao().loadFavoriteAds(true),
+                                                getApplicationContext(), favoriteView);
+                        Log.i("Ad_Activity", "favAdAdapter loaded");
+                        AdRecyclerView.setAdapter(favAdAdapter);
                     }
-                    adLoading.setVisibility(View.GONE);
-                    AdAdapter = new AdBlockRecyclerViewAdapter(favorites, getApplicationContext());
-                    Log.i("Ad_Activity", "AdAdapter loaded");
-                    AdRecyclerView.setAdapter(AdAdapter);
+
+                    else {
+                        favoriteView = false;
+                        AdRecyclerView.setAdapter(AdAdapter);
+                    }
+
+
                 } catch (Exception e) {
                     Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
                     e.printStackTrace();

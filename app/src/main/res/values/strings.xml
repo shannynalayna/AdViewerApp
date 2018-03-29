@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Ad View</string>
-    <string name="image">Ad</string>
+    <string name="adImage">Ad Image</string>
     <string name="ad_activity">Ad Activity</string>
+    <string name="ViewAdFavorites">View Favorites</string>
+    <string name="addFavorite">Add to Favorites</string>
+    <string name="removeFavorite">Remove from Favorites</string>
 </resources>

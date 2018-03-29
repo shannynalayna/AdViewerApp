@@ -10,7 +10,20 @@ import android.util.Log;
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
+    }
 
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        return;
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+
+    }
+/*
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "main.db";
     private static final int DATABASE_VERSION = 1;
@@ -36,6 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(Ad_DatabaseHandler.SQL_DROP_AD_FAVORITES_TABLE);
         onCreate(sqLiteDatabase);
     }
-
+*/
 
 }

@@ -2,8 +2,11 @@ package satel.adsviewer;
 
 
 import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -18,10 +21,11 @@ import java.io.Serializable;
 @Entity(tableName = "adsDataBase")
 public class Ad_Block implements Serializable {
 
+    @Embedded
     @SerializedName("image") // Used to parse JSON
     private imageUrl imageUrl = new imageUrl();
 
-    @ColumnInfo(name = "price_value")
+    @Embedded
     private Price price = new Price();
 
     @ColumnInfo(name = "title")
@@ -31,6 +35,7 @@ public class Ad_Block implements Serializable {
     private String location = "No Location Available";
 
     @PrimaryKey
+    @NonNull
     @SerializedName("id") // Used to parse JSON
     private String imageID;
 
@@ -39,6 +44,7 @@ public class Ad_Block implements Serializable {
     public Ad_Block() {
     }
 
+    @Ignore
     public Ad_Block(imageUrl imageUrl, Price price, String description,
                     String location, String imageID) {
         this.imageUrl = imageUrl;
@@ -48,6 +54,7 @@ public class Ad_Block implements Serializable {
         this.imageID = imageID;
     }
 
+    @Ignore
     public Ad_Block(imageUrl imageUrl, Price price, String description,
                     String location, String title, boolean isFavorited,
                     String imageID) {
@@ -88,20 +95,28 @@ public class Ad_Block implements Serializable {
         this.imageID = imageID;
     }
 
-    public String getImageUrl() {
-        return imageUrl.getImageUrl();
+    public imageUrl getImageUrl() {
+        return imageUrl;
     }
 
     public void setImageUrl(imageUrl imageUrl) {
         this.imageUrl = imageUrl;
     }
 
+    public Price getPrice() {
+        return price;
+    }
+
+    public void setPrice(Price price) {
+        this.price = price;
+    }
+
     public int getPriceValue() {
         return price.getValue();
     }
 
-    public void setPriceValue(Price priceValue) {
-        this.price = price;
+    public void setPriceValue(int value) {
+        this.price.setValue(value);
     }
 
     public String getDescription() {

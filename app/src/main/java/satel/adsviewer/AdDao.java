@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Dao
-public interface adDao {
+public interface AdDao {
 
     @Insert
     public void insertAd(Ad_Block ad);
@@ -20,14 +20,18 @@ public interface adDao {
     @Insert
     public void insertAds(List<Ad_Block> ads);
 
+    @Query("SELECT COUNT(*) FROM adsDataBase WHERE imageID != Null")
+    public int adCount();
+
+
     @Delete
     public void deleteAds(Ad_Block... ads);
 
     @Query("SELECT * FROM adsDataBase")
-    public Ad_Block[] loadAllAds();
+    public List<Ad_Block> loadAllAds();
 
-    @Query("SELECT * FROM adsDataBase WHERE isFavorited = 1")
-    public Ad_Block[] loadFavoriteAds();
+    @Query("SELECT * FROM adsDataBase WHERE isFavorited = :favorited")
+    public List<Ad_Block> loadFavoriteAds(boolean favorited);
 
 
 }

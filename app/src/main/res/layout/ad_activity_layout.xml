@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="satel.adsviewer.Ad_Activity">
-
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +19,8 @@
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
         tools:context="satel.adsviewer.Ad_Activity"
-        tools:listitem="@layout/ad_card" />
+        tools:listitem="@layout/ad_card"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
 
     <ProgressBar
@@ -31,7 +32,6 @@
         android:layout_marginLeft="149dp"
         android:layout_marginStart="149dp"
         android:indeterminate="true" />
-
 
 
 </RelativeLayout>

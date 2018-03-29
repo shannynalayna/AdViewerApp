@@ -21,10 +21,16 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
 
     private List<Ad_Block> ads;
     private Context context;
+    private boolean favoriteView;
+    private String appendUrl = "https://images.finncdn.no/dynamic/480x360c/";
+    private int adCount;
 
-    public AdBlockRecyclerViewAdapter(List<Ad_Block> ads, Context context) {
+
+    public AdBlockRecyclerViewAdapter(List<Ad_Block> ads, Context context, boolean favoriteView, int adCount) {
         this.ads = ads;
         this.context = context;
+        this.favoriteView = favoriteView;
+        this.adCount = adCount;
     }
 
 
@@ -42,9 +48,14 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
         Log.i("AdBlock Adapter", "In the onBindViewHolder function");
         Log.i("AdBlock Adapter", "At this URL: " + ad.getImageUrl());
         try {
-            Glide.with(context).load(ad.getImageUrl()).placeholder(R.drawable.no_image_available).into(holder.card_image);
+            Glide.with(context).load(appendUrl + ad.getImageUrl().getUrl()).placeholder(R.drawable.no_image_available).into(holder.card_image);
             holder.card_content.setText(ad.getContent());
             holder.card_title.setText(ad.getDescription());
+
+            if(ad.getIsFavorited()) {
+                holder.card_favorite_check.setText(R.string.removeFavorite);
+            }
+
             holder.card_favorite_check.setHapticFeedbackEnabled(true);
             holder.card_favorite_check.setOnClickListener(new View.OnClickListener() {
 
@@ -52,10 +63,16 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
                     CheckBox cb = (CheckBox) v;
 
                     if(holder.card_favorite_check.isChecked()) {
-                        ad.setIsFavorited(true);
-                    }
-                    else {
-                        ad.setIsFavorited(false);
+                        if(ad.getIsFavorited()) {
+                            ad.setIsFavorited(false);
+                            holder.card_favorite_check.setText(R.string.addFavorite);
+                            holder.card_favorite_check.setChecked(false);
+                        }
+                        else {
+                            ad.setIsFavorited(true);
+                            holder.card_favorite_check.setText(R.string.removeFavorite);
+                            holder.card_favorite_check.setChecked(false);
+                        }
                     }
                 }
             });
@@ -64,19 +81,12 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
         } catch (Exception e) {
             Log.e("AdBlock Adapter", "Error with creating Drawable with " + e.toString());
         }
-
-        try {
-            holder.card_title.toString();
-        } catch (Exception e) {
-            Log.e("ad adapter", "Caught");
-        }
-
     }
 
 
     @Override
     public int getItemCount() {
-        return ads.size();
+        return adCount;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -100,6 +110,11 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
             card_content = (TextView) v.findViewById(R.id.card_content);
             card_image = (ImageView) v.findViewById(R.id.card_image);
             card_favorite_check = (CheckBox) v.findViewById(R.id.favoriteCheck);
+
+            if(favoriteView) {
+                card_favorite_check.setText(R.string.removeFavorite);
+            }
+
             card_relative_layout = (RelativeLayout) v.findViewById(R.id.card_relative_layout);
             card_view = (CardView) v.findViewById(R.id.card_view);
         }
