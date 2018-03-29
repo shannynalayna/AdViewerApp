@@ -21,10 +21,15 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
 
     private List<Ad_Block> ads;
     private Context context;
+    private boolean favoritesView;
 
-    public AdBlockRecyclerViewAdapter(List<Ad_Block> ads, Context context) {
+    private String appendUrl = "https://images.finncdn.no/dynamic/480x360c/";
+
+
+    public AdBlockRecyclerViewAdapter(List<Ad_Block> ads, Context context, boolean favoritesView) {
         this.ads = ads;
         this.context = context;
+        this.favoritesView = favoritesView;
     }
 
 
@@ -37,26 +42,36 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Ad_Block ad = ads.get(position);
         Log.i("AdBlock Adapter", "In the onBindViewHolder function");
         Log.i("AdBlock Adapter", "At this URL: " + ad.getImageUrl());
         try {
-            Glide.with(context).load(ad.getImageUrl()).placeholder(R.drawable.no_image_available).into(holder.card_image);
+            Glide.with(context).load(appendUrl + ad.getImageUrl()).placeholder(R.drawable.no_image_available).into(holder.card_image);
             holder.card_content.setText(ad.getContent());
             holder.card_title.setText(ad.getDescription());
-            holder.card_favorite_check.setHapticFeedbackEnabled(true);
+
+            if(ad.getIsFavorited()) {
+                holder.card_favorite_check.setText(R.string.removeFavorite);
+                holder.card_favorite_check.setChecked(true);
+            }
+
             holder.card_favorite_check.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View v) {
                     CheckBox cb = (CheckBox) v;
 
-                    if(holder.card_favorite_check.isChecked()) {
+                    if(holder.card_favorite_check.isChecked() && !ad.getIsFavorited()) {
                         ad.setIsFavorited(true);
+                        holder.card_favorite_check.setText(R.string.removeFavorite);
+                        holder.card_favorite_check.setChecked(true);
                     }
-                    else {
+                    else if(!holder.card_favorite_check.isChecked() && ad.getIsFavorited()) {
                         ad.setIsFavorited(false);
+                        holder.card_favorite_check.setText(R.string.addFavorite);
+                        holder.card_favorite_check.setChecked(false);
                     }
+
                 }
             });
 

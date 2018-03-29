@@ -18,7 +18,6 @@ public class imageUrl implements Serializable {
 
     @PrimaryKey
     private String url;
-    private String appendUrl = "https://images.finncdn.no/dynamic/480x360c/";
 
     public imageUrl() {
 
@@ -30,7 +29,7 @@ public class imageUrl implements Serializable {
 
     // Getters & Setters for imageUrl Class
     public String getImageUrl() {
-        return appendUrl + url;
+        return url;
     }
 
     public void setImageUrl(String url) {

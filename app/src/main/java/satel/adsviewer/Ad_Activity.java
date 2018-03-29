@@ -39,8 +39,12 @@ public class Ad_Activity extends AppCompatActivity {
     private RequestQueue reqQueue;
     private Gson gson;
 
-    private static List<Ad_Block> ads;
+
+    private static List<Ad_Block> displayAds;
+    private static List<Ad_Block> ads = new ArrayList<Ad_Block>();
     private static List<Ad_Block> favorites;
+
+    private boolean favoritesView = false;
 
     private ProgressBar adLoading;
 
@@ -72,9 +76,6 @@ public class Ad_Activity extends AppCompatActivity {
 
         adLoading.setVisibility(View.VISIBLE);
 
-        Arrays[] favorites;
-        favorites = new Arrays[1];
-
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -104,13 +105,14 @@ public class Ad_Activity extends AppCompatActivity {
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
                 ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
+                displayAds = ads;
 
                 Log.i("Ad_Activity", "Ads loaded: " + ads.size());
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
                 adLoading.setVisibility(View.GONE);
 
 
-                AdAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext());
+                AdAdapter = new AdBlockRecyclerViewAdapter(displayAds, getApplicationContext(), favoritesView);
                 Log.i("Ad_Activity", "AdAdapter loaded");
                 AdRecyclerView.setAdapter(AdAdapter);
 
@@ -135,18 +137,39 @@ public class Ad_Activity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
-                    favorites = new ArrayList<Ad_Block>();
 
-                    adLoading.setVisibility(View.VISIBLE);
-                    for(Ad_Block ad : ads) {
-                        if(ad.getIsFavorited()) {
-                            favorites.add(ad);
+                    if(!favoritesView) {
+                        int favoriteCount = favoriteCount(ads);
+                        if(favoriteCount != 0) {
+                            favoritesView = true;
+                            adLoading.setVisibility(View.VISIBLE);
+
+                            updateFavorites();
+
+                            AdBlockRecyclerViewAdapter favoritesAdAdapter =
+                                    new AdBlockRecyclerViewAdapter(favorites, getApplicationContext(),
+                                            favoritesView);
+
+                            adLoading.setVisibility(View.GONE);
+
+                            AdRecyclerView.setAdapter(favoritesAdAdapter);
+
+
+                            Log.i("Ad_Activity", "AdAdapter loaded");
+                        }
+                        else {
+                            Log.i("Ad Activity", "No favorites to show");
                         }
                     }
-                    adLoading.setVisibility(View.GONE);
-                    AdAdapter = new AdBlockRecyclerViewAdapter(favorites, getApplicationContext());
-                    Log.i("Ad_Activity", "AdAdapter loaded");
-                    AdRecyclerView.setAdapter(AdAdapter);
+                    else {
+                        favoritesView = false;
+
+
+                        AdRecyclerView.setAdapter(AdAdapter);
+
+                    }
+
+
                 } catch (Exception e) {
                     Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
                     e.printStackTrace();
@@ -156,5 +179,27 @@ public class Ad_Activity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public static int favoriteCount(List<Ad_Block> ads) {
+        int count = 0;
+        for(Ad_Block ad : ads) {
+            if(ad.getIsFavorited()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static void updateFavorites() {
+        favorites = new ArrayList<Ad_Block>();
+        for (Ad_Block ad : ads) {
+            if (ad.getIsFavorited()) {
+                favorites.add(ad);
+            }
+        }
+
+
+
     }
 }

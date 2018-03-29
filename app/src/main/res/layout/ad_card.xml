@@ -35,7 +35,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_gravity="top"
                 android:layout_marginTop="10dp"
-                android:contentDescription="@string/adImage"
+                android:contentDescription="@string/ad_image"
                 android:foregroundGravity="fill_horizontal"
                 tools:context="satel.adsviewer.Ad_Activity" />
 
@@ -52,7 +52,6 @@
                 android:layout_marginBottom="14dp"
                 android:layout_marginEnd="30dp"
                 android:layout_marginRight="30dp"
-                android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="@color/darkyellow"
                 tools:context="satel.adsviewer.Ad_Activity" />
 
@@ -64,7 +63,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:gravity="center"
-                android:textAppearance="?attr/textAppearanceListItem"
                 tools:context="satel.adsviewer.Ad_Activity" />
 
             <CheckBox
