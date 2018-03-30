@@ -1,6 +1,7 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -47,6 +49,9 @@ public class Ad_Activity extends AppCompatActivity {
     private boolean favoritesView = false;
 
     private ProgressBar adLoading;
+
+    public Toast toast;
+    public int duration = Toast.LENGTH_SHORT;
 
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
@@ -134,11 +139,15 @@ public class Ad_Activity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
+
+        //switch statement enables further modification, more action bar items
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
 
                     if(!favoritesView) {
+
+
                         int favoriteCount = favoriteCount(ads);
                         if(favoriteCount != 0) {
                             favoritesView = true;
@@ -158,10 +167,16 @@ public class Ad_Activity extends AppCompatActivity {
                             Log.i("Ad_Activity", "AdAdapter loaded");
                         }
                         else {
+                            toast = Toast.makeText(getApplicationContext(), R.string.noFavorites, duration);
+                            toast.show();
+
+
+
                             Log.i("Ad Activity", "No favorites to show");
                         }
                     }
                     else {
+
                         favoritesView = false;
 
 
@@ -198,8 +213,12 @@ public class Ad_Activity extends AppCompatActivity {
                 favorites.add(ad);
             }
         }
-
-
+    }
+/*
+    private static void updateMenu(Menu menu) {
+        menu.findItem(R.id.action_favorite).setIconTintMode(PorterDuff.Mode.DARKEN);
 
     }
+*/
+
 }

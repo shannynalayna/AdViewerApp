@@ -30,10 +30,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     // Following added to allow parsing / transformation of JSON file
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.android.volley:volley:1.0.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.github.bumptech.glide:glide:3.8.0'
+    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.android.volley:volley:1.0.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.github.bumptech.glide:glide:3.8.0'
 
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 
