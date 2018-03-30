@@ -1,6 +1,7 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
 import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,7 +45,7 @@ public class Ad_Activity extends AppCompatActivity {
 
     private static List<Ad_Block> displayAds;
     private static List<Ad_Block> ads = new ArrayList<Ad_Block>();
-    private static List<Ad_Block> favorites;
+    private static List<Ad_Block> favorites = new ArrayList<Ad_Block>();
 
     private boolean favoritesView = false;
 
@@ -52,6 +53,10 @@ public class Ad_Activity extends AppCompatActivity {
 
     public Toast toast;
     public int duration = Toast.LENGTH_SHORT;
+
+    private static final String AD_BLOCK_DATAFRAGMENT = "Ad_Block_DataFragment";
+    private Ad_Block_DataFragment adBlockDataFragment;
+    private FragmentManager fm;
 
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
@@ -81,6 +86,14 @@ public class Ad_Activity extends AppCompatActivity {
 
         adLoading.setVisibility(View.VISIBLE);
 
+        fm = getFragmentManager();
+        adBlockDataFragment = (Ad_Block_DataFragment) fm.findFragmentByTag(AD_BLOCK_DATAFRAGMENT);
+
+        if (adBlockDataFragment == null) {
+            adBlockDataFragment = new Ad_Block_DataFragment();
+            fm.beginTransaction().add(adBlockDataFragment, AD_BLOCK_DATAFRAGMENT).commit();
+            adBlockDataFragment.setData(ads, favorites);
+        }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -120,6 +133,8 @@ public class Ad_Activity extends AppCompatActivity {
                 AdAdapter = new AdBlockRecyclerViewAdapter(displayAds, getApplicationContext(), favoritesView);
                 Log.i("Ad_Activity", "AdAdapter loaded");
                 AdRecyclerView.setAdapter(AdAdapter);
+
+
 
             } catch (JSONException e) {
                 Log.e("Ad_Activity", "Error saving ads");
@@ -207,13 +222,13 @@ public class Ad_Activity extends AppCompatActivity {
     }
 
     public static void updateFavorites() {
-        favorites = new ArrayList<Ad_Block>();
         for (Ad_Block ad : ads) {
             if (ad.getIsFavorited()) {
                 favorites.add(ad);
             }
         }
     }
+
 /*
     private static void updateMenu(Menu menu) {
         menu.findItem(R.id.action_favorite).setIconTintMode(PorterDuff.Mode.DARKEN);
