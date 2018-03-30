@@ -54,9 +54,6 @@ public class Ad_Activity extends AppCompatActivity {
     public Toast toast;
     public int duration = Toast.LENGTH_SHORT;
 
-    private static final String AD_BLOCK_DATAFRAGMENT = "Ad_Block_DataFragment";
-    private Ad_Block_DataFragment adBlockDataFragment;
-    private FragmentManager fm;
 
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
@@ -86,14 +83,6 @@ public class Ad_Activity extends AppCompatActivity {
 
         adLoading.setVisibility(View.VISIBLE);
 
-        fm = getFragmentManager();
-        adBlockDataFragment = (Ad_Block_DataFragment) fm.findFragmentByTag(AD_BLOCK_DATAFRAGMENT);
-
-        if (adBlockDataFragment == null) {
-            adBlockDataFragment = new Ad_Block_DataFragment();
-            fm.beginTransaction().add(adBlockDataFragment, AD_BLOCK_DATAFRAGMENT).commit();
-            adBlockDataFragment.setData(ads, favorites);
-        }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
