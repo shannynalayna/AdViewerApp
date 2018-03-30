@@ -5,13 +5,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Ad_Activity extends AppCompatActivity {
+public class Ad_Activity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private static final String remoteJSON = "https://gist.githubusercontent.com/" +
             "3lvis/3799feea005ed49942dcb56386ecec2b/" +
@@ -47,6 +50,7 @@ public class Ad_Activity extends AppCompatActivity {
     private boolean favoritesView = false;
 
     private ProgressBar adLoading;
+    private Switch view_switch;
 
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
@@ -58,6 +62,13 @@ public class Ad_Activity extends AppCompatActivity {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actionmenu, menu);
+        MenuItem item = menu.findItem(R.id.view_switch);
+
+        item.setActionView(R.layout.switch_item);
+
+        view_switch = (Switch) item.getActionView()
+                .findViewById(R.id.switch_layout);
+        view_switch.setOnCheckedChangeListener(this);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -76,6 +87,8 @@ public class Ad_Activity extends AppCompatActivity {
 
         adLoading.setVisibility(View.VISIBLE);
 
+        view_switch = (Switch) findViewById(R.id.switch_layout);
+        view_switch.setOnCheckedChangeListener(this);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
@@ -131,56 +144,6 @@ public class Ad_Activity extends AppCompatActivity {
         }
     };
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.action_favorite:
-                try {
-
-                    if(!favoritesView) {
-                        int favoriteCount = favoriteCount(ads);
-                        if(favoriteCount != 0) {
-                            favoritesView = true;
-                            adLoading.setVisibility(View.VISIBLE);
-
-                            updateFavorites();
-
-                            AdBlockRecyclerViewAdapter favoritesAdAdapter =
-                                    new AdBlockRecyclerViewAdapter(favorites, getApplicationContext(),
-                                            favoritesView);
-
-                            adLoading.setVisibility(View.GONE);
-
-                            AdRecyclerView.setAdapter(favoritesAdAdapter);
-
-
-                            Log.i("Ad_Activity", "AdAdapter loaded");
-                        }
-                        else {
-                            Log.i("Ad Activity", "No favorites to show");
-                        }
-                    }
-                    else {
-                        favoritesView = false;
-
-
-                        AdRecyclerView.setAdapter(AdAdapter);
-
-                    }
-
-
-                } catch (Exception e) {
-                    Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
-                    e.printStackTrace();
-                }
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     public static int favoriteCount(List<Ad_Block> ads) {
         int count = 0;
         for(Ad_Block ad : ads) {
@@ -201,5 +164,47 @@ public class Ad_Activity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked){
+        // Handle presses on the action bar items
+        try {
+            if(isChecked) {
+                int favoriteCount = favoriteCount(ads);
+                if(favoriteCount != 0) {
+                    favoritesView = true;
+                    adLoading.setVisibility(View.VISIBLE);
+
+                    updateFavorites();
+
+                    AdBlockRecyclerViewAdapter favoritesAdAdapter =
+                            new AdBlockRecyclerViewAdapter(favorites, getApplicationContext(),
+                                    favoritesView);
+
+                    adLoading.setVisibility(View.GONE);
+
+                    AdRecyclerView.setAdapter(favoritesAdAdapter);
+
+
+                    Log.i("Ad_Activity", "AdAdapter loaded");
+                }
+                else {
+                    Log.i("Ad Activity", "No favorites to show");
+                }
+            }
+            else {
+                favoritesView = false;
+
+
+                AdRecyclerView.setAdapter(AdAdapter);
+
+            }
+
+
+        } catch (Exception e) {
+            Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
+            e.printStackTrace();
+        }
     }
 }
