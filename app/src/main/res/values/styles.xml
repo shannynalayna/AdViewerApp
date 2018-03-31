@@ -6,11 +6,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="android:colorBackground">@color/colorHighlight</item>
     </style>
 
     <style name="AdsViewerTheme" parent="AppTheme" >
-        <item name="android:textColorPrimary">?android:attr/editTextColor</item>
+        <item name="android:textColorSecondary">@color/colorAccentDarkHighlight</item>
+        <item name="android:textColor">@color/colorBasic</item>
     </style>
 
 </resources>

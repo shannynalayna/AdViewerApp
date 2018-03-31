@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorHighlight"
     tools:context="satel.adsviewer.Ad_Activity"
     android:label="@string/app_name">
 
@@ -19,6 +20,7 @@
         android:scrollbarSize="5dp"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
+        android:tag="recycler_view"
         tools:context="satel.adsviewer.Ad_Activity"
         tools:listitem="@layout/ad_card" />
 

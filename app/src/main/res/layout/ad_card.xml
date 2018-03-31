@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,10 +12,10 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        card_view:cardBackgroundColor="@color/colorHighlight"
         card_view:cardCornerRadius="10dp"
         card_view:cardElevation="5dp"
         card_view:cardUseCompatPadding="true"
+        android:background="@color/colorHighlight"
         tools:context="satel.adsviewer.Ad_Activity">
 
         <RelativeLayout
@@ -28,8 +29,8 @@
 
             <ImageView
                 android:id="@+id/card_image"
-                android:layout_width="175dp"
-                android:layout_height="140dp"
+                android:layout_width="192dp"
+                android:layout_height="176dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
@@ -39,40 +40,59 @@
                 android:foregroundGravity="fill_horizontal"
                 tools:context="satel.adsviewer.Ad_Activity" />
 
-            <!-- Change the color of the text HERE -->
+            <TextView
+                android:id="@+id/card_title"
+                android:layout_width="170dp"
+                android:layout_height="160dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="@string/card_title"
+                android:ellipsize="marquee"
+                android:gravity="top|center_horizontal|center"
+                android:padding="10dp"
+                android:text="@string/card_title"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textColor="@color/colorBasic"
+                android:typeface="normal"
+                android:visibility="visible"
+                card_view:fontFamily="sans-serif-condensed"
+                tools:context="satel.adsviewer.Ad_Activity"
+                tools:text="@string/card_title" />
+
             <TextView
                 android:id="@+id/card_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignRight="@+id/card_image"
-                android:layout_gravity="left"
-                android:layout_marginBottom="14dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginRight="30dp"
-                tools:context="satel.adsviewer.Ad_Activity" />
-
-            <TextView
-                android:id="@+id/card_title"
-                android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:gravity="center"
-                tools:context="satel.adsviewer.Ad_Activity" />
+                android:layout_gravity="right"
+                android:contentDescription="@string/card_content"
+                android:ellipsize="marquee"
+                android:padding="5dp"
+                android:text="@string/card_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/colorAccentDarkHighlight"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:typeface="normal"
+                android:visibility="visible"
+                card_view:fontFamily="sans-serif"
+                tools:context="satel.adsviewer.Ad_Activity"
+                tools:text="@string/card_content" />
 
             <CheckBox
                 android:id="@+id/favoriteCheck"
                 style="@android:style/Widget.Holo.CompoundButton.CheckBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="205dp"
+                android:layout_height="167dp"
+                android:layout_alignBottom="@+id/card_image"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/card_content"
+                android:layout_below="@id/card_image"
+                android:layout_marginBottom="-26dp"
                 android:checked="false"
+                android:contentDescription="@string/addFavorite"
                 android:text="@string/addFavorite"
                 android:visibility="visible" />
         </RelativeLayout>

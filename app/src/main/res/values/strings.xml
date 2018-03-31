@@ -2,7 +2,16 @@
     <string name="app_name">Ad Viewer</string>
     <string name="ad_image">Ad Image</string>
     <string name="ad_activity">Ad Activity</string>
+    <string name="ads_loaded">Ads successfully loaded!</string>
+    <string name="fail_ads_loaded">Ads cannot be loaded!</string>
     <string name="addFavorite">Add to Favorites</string>
     <string name="removeFavorite">Remove from Favorites</string>
     <string name="noFavorites">No Favorites to show!</string>
+    <string name="FavoritesDisplay">Favorites</string>
+    <string name="card_content">Content</string>
+    <string name="card_title">Title</string>
+    <string name="appendUrl">https://images.finncdn.no/dynamic/480x360c/</string>
+    <string name="remoteJSONresource">https://gist.githubusercontent.com/3lvis/3799feea005ed49942dcb56386ecec2b/raw/63249144485884d279d55f4f3907e37098f55c74/discover.json</string>
+    <string name="remoteJSON">raw/63249144485884d279d55f4f3907e37098f55c74/discover.json</string>
+
 </resources>
