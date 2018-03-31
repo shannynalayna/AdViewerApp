@@ -17,22 +17,41 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecyclerViewAdapter.ViewHolder> {
+
+/**
+ * Adapter for the Recycler View
+ * Intended to translate the data from a single Ad_Block to the views included
+ * in the card view:
+ *  - image view
+ *  - text view (for ad description)
+ *  - text view (for ad price / location )
+ *  - checkbox (to add / remove ad from list of favorites)
+ */
+public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
+                                                    <AdBlockRecyclerViewAdapter.ViewHolder> {
 
     private List<Ad_Block> ads;
     private Context context;
     private boolean favoritesView;
+    private String appendUrl;
 
-    private String appendUrl = "https://images.finncdn.no/dynamic/480x360c/";
-
-
+    /**
+     * @param ads
+     * @param context
+     * @param favoritesView
+     */
     public AdBlockRecyclerViewAdapter(List<Ad_Block> ads, Context context, boolean favoritesView) {
         this.ads = ads;
         this.context = context;
         this.favoritesView = favoritesView;
+        appendUrl = context.getString(R.string.appendUrl);
     }
 
-
+    /**
+     * @param parent
+     * @param viewType
+     * @return holder
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -41,16 +60,27 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
         return holder;
     }
 
+    /**
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Ad_Block ad = ads.get(position);
-        Log.i("AdBlock Adapter", "In the onBindViewHolder function");
-        Log.i("AdBlock Adapter", "At this URL: " + ad.getImageUrl());
+
         try {
-            Glide.with(context).load(appendUrl + ad.getImageUrl()).placeholder(R.drawable.no_image_available).into(holder.card_image);
+            /**
+             * Placeholder image used as url may be null
+             */
+            Glide.with(context).load(appendUrl + ad.getImageUrl())
+                    .placeholder(R.drawable.no_image_available).into(holder.card_image);
             holder.card_content.setText(ad.getContent());
             holder.card_title.setText(ad.getDescription());
 
+            /**
+             * Ensuring the checkbox maintains it's checked state if the ad is
+             * favorited
+             */
             if(ad.getIsFavorited()) {
                 holder.card_favorite_check.setText(R.string.removeFavorite);
                 holder.card_favorite_check.setChecked(true);
@@ -66,6 +96,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
                         holder.card_favorite_check.setText(R.string.removeFavorite);
                         holder.card_favorite_check.setChecked(true);
                     }
+
                     else if(!holder.card_favorite_check.isChecked() && ad.getIsFavorited()) {
                         ad.setIsFavorited(false);
                         holder.card_favorite_check.setText(R.string.addFavorite);
@@ -75,27 +106,22 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
                 }
             });
 
-
         } catch (Exception e) {
-            Log.e("AdBlock Adapter", "Error with creating Drawable with " + e.toString());
-        }
-
-        try {
-            holder.card_title.toString();
-        } catch (Exception e) {
-            Log.e("ad adapter", "Caught");
+            Log.e("Adapter", "Error Displaying Ad");
         }
 
     }
 
-
+    /**
+     * @return ads.size()
+     */
     @Override
     public int getItemCount() {
         return ads.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
 
+    protected class ViewHolder extends RecyclerView.ViewHolder {
 
         //Defining View objects
         public TextView card_title;
@@ -106,10 +132,11 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter<AdBlockRecy
         public CardView card_view;
 
 
-        public ViewHolder(View v) {
+        /**
+         * @param v
+         */
+        ViewHolder(View v) {
             super(v);
-
-            Log.i("AdBlockAdapter", "In the View Holder item");
 
             card_title = (TextView) v.findViewById(R.id.card_title);
             card_content = (TextView) v.findViewById(R.id.card_content);

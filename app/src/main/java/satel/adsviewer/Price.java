@@ -1,10 +1,5 @@
 package satel.adsviewer;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.ForeignKey;
-import android.arch.persistence.room.PrimaryKey;
-
 import java.io.Serializable;
 
 /**
@@ -15,9 +10,7 @@ public class Price implements Serializable {
 
     private int value = 0;
 
-    public Price() {
-
-    }
+    public Price() {    }
 
     public Price (int value) {
         this.value = value;

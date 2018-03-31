@@ -1,8 +1,6 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
-import android.app.FragmentManager;
-import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -33,36 +30,39 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Main Activity for application:
+ *
+ *  - Fetches ads from the remote JSON resource
+ *  - Maintains overall list of ads as well as ads marked 'favorite"
+ *  - Creates / inflates the view for the application activity
+ *      - Recycler view utilized to make scrolling through ads lists easier
+ *  - Creates the adapter for the recycler view used for this application
+ */
 public class Ad_Activity extends AppCompatActivity {
 
-    private static final String remoteJSON = "https://gist.githubusercontent.com/" +
-            "3lvis/3799feea005ed49942dcb56386ecec2b/" +
-            "raw/63249144485884d279d55f4f3907e37098f55c74/discover.json";
-
+    private String remoteJSON;
     private RequestQueue reqQueue;
     private Gson gson;
-
-
-    private static List<Ad_Block> displayAds;
     private static List<Ad_Block> ads = new ArrayList<Ad_Block>();
     private static List<Ad_Block> favorites = new ArrayList<Ad_Block>();
-
     private boolean favoritesView = false;
-
     private ProgressBar adLoading;
-
     public Toast toast;
     public int duration = Toast.LENGTH_SHORT;
-
-
     private RecyclerView AdRecyclerView;
     private RecyclerView.Adapter AdAdapter;
-    private RecyclerView.LayoutManager AdLayoutManager;
 
 
+    /**
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
+        /** Inflating the menu to enable the view switch button
+         * between which list of ads to view
+         */
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actionmenu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -74,72 +74,80 @@ public class Ad_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ad_activity_layout);
-        Log.i("Init: ", "Here is that id: " + this.findViewById(R.id.recyclerViewList));
-
 
         reqQueue = Volley.newRequestQueue(this);
-
         adLoading = (ProgressBar) findViewById(R.id.adProgressBar);
-
         adLoading.setVisibility(View.VISIBLE);
 
-
+        remoteJSON = getString(R.string.remoteJSONresource);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
         fetchAds();
 
         AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
-        Log.i("Init Recycler view: ", AdRecyclerView.toString());
-        // Using a linear Layout Manager
 
-        AdLayoutManager = new LinearLayoutManager(this);
-        Log.i("Init Recycler view: ", AdLayoutManager.toString());
+        RecyclerView.LayoutManager adLayoutManager = new LinearLayoutManager(this);
 
-        AdRecyclerView.setLayoutManager(AdLayoutManager);
+        AdRecyclerView.setLayoutManager(adLayoutManager);
     }
 
+    /**
+     * Making request separate from main thread
+     */
     private void fetchAds() {
         StringRequest req = new StringRequest(Request.Method.GET, remoteJSON,
                 onAdsLoaded, onAdsError);
         reqQueue.add(req);
     }
 
+    /**
+     * Listening for a response from the JSON resource, meant to catch any possible errors
+     * when making this connection
+     */
     private final Response.Listener<String> onAdsLoaded = new Response.Listener<String>() {
 
+        /**
+         * @param resp
+         */
         @Override
         public void onResponse(String resp) {
             try {
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
                 ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
-                displayAds = ads;
 
-                Log.i("Ad_Activity", "Ads loaded: " + ads.size());
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
+                toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
+                toast.show();
                 adLoading.setVisibility(View.GONE);
-
-
-                AdAdapter = new AdBlockRecyclerViewAdapter(displayAds, getApplicationContext(), favoritesView);
-                Log.i("Ad_Activity", "AdAdapter loaded");
+                AdAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext(),
+                                                            favoritesView);
                 AdRecyclerView.setAdapter(AdAdapter);
-
-
-
             } catch (JSONException e) {
+                toast = Toast.makeText(getApplicationContext(), R.string.fail_ads_loaded, duration);
+                toast.show();
                 Log.e("Ad_Activity", "Error saving ads");
                 e.printStackTrace();
             }
         }
     };
-
     private final Response.ErrorListener onAdsError = new Response.ErrorListener() {
 
+        /**
+         * @param err
+         */
         @Override
         public void onErrorResponse(VolleyError err) {
+            toast = Toast.makeText(getApplicationContext(), R.string.fail_ads_loaded, duration);
+            toast.show();
             Log.e("ad_activity_layout", err.toString());
         }
     };
 
+    /**
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
@@ -148,16 +156,14 @@ public class Ad_Activity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
-
                     if(!favoritesView) {
-
-
                         int favoriteCount = favoriteCount(ads);
                         if(favoriteCount != 0) {
                             favoritesView = true;
                             adLoading.setVisibility(View.VISIBLE);
-
                             updateFavorites();
+
+                            setTitle(R.string.FavoritesDisplay);
 
                             AdBlockRecyclerViewAdapter favoritesAdAdapter =
                                     new AdBlockRecyclerViewAdapter(favorites, getApplicationContext(),
@@ -166,29 +172,17 @@ public class Ad_Activity extends AppCompatActivity {
                             adLoading.setVisibility(View.GONE);
 
                             AdRecyclerView.setAdapter(favoritesAdAdapter);
-
-
-                            Log.i("Ad_Activity", "AdAdapter loaded");
                         }
                         else {
                             toast = Toast.makeText(getApplicationContext(), R.string.noFavorites, duration);
                             toast.show();
-
-
-
-                            Log.i("Ad Activity", "No favorites to show");
                         }
                     }
                     else {
-
                         favoritesView = false;
-
-
+                        setTitle(R.string.app_name);
                         AdRecyclerView.setAdapter(AdAdapter);
-
                     }
-
-
                 } catch (Exception e) {
                     Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
                     e.printStackTrace();
@@ -200,6 +194,10 @@ public class Ad_Activity extends AppCompatActivity {
         }
     }
 
+    /**
+     * @param ads
+     * @return
+     */
     public static int favoriteCount(List<Ad_Block> ads) {
         int count = 0;
         for(Ad_Block ad : ads) {
@@ -210,7 +208,12 @@ public class Ad_Activity extends AppCompatActivity {
         return count;
     }
 
+    /**
+     * Updating favorites in the case that the user has selected / deselected certain ads
+     * independent of which view is being displayed
+     */
     public static void updateFavorites() {
+        favorites = new ArrayList<Ad_Block>();
         for (Ad_Block ad : ads) {
             if (ad.getIsFavorited()) {
                 favorites.add(ad);
@@ -218,11 +221,5 @@ public class Ad_Activity extends AppCompatActivity {
         }
     }
 
-/*
-    private static void updateMenu(Menu menu) {
-        menu.findItem(R.id.action_favorite).setIconTintMode(PorterDuff.Mode.DARKEN);
-
-    }
-*/
 
 }

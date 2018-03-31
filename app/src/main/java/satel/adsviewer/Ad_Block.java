@@ -11,26 +11,19 @@ import java.io.Serializable;
 
 /**
  * Created by satel on 3/25/2018.
+ * Class holds the information from the parsed JSON resource link:
+ *
  */
-
-//TODO: add default values for all variables that might be null
-
-@Entity(tableName = "adsDataBase")
 public class Ad_Block implements Serializable {
 
     @SerializedName("image") // Used to parse JSON
     private imageUrl imageUrl = new imageUrl();
 
-    @ColumnInfo(name = "price_value")
     private Price price = new Price();
 
-    @ColumnInfo(name = "title")
     private String description = "No Description Available";
-
-
     private String location = "No Location Available";
 
-    @PrimaryKey
     @SerializedName("id") // Used to parse JSON
     private String imageID;
 
@@ -58,24 +51,6 @@ public class Ad_Block implements Serializable {
 
         this.isFavorited = isFavorited;
         this.imageID = imageID;
-
-    }
-
-    @Override
-    public String toString() {
-        // Need to rethink exactly what I might want to return here
-        String ret;
-        if( imageUrl != null && price != null && description != null) {
-            ret = "Ad_Block{ " +
-                    "imageID=" + imageID + ", " +
-                    "priceValue=" + price.getValue() + ", " +
-                    "description=" + description + "}";
-        }
-        else {
-            ret = "Ad_Block{ " +
-                    "imageID=" + imageID + "}";
-        }
-        return ret;
 
     }
 
@@ -128,6 +103,10 @@ public class Ad_Block implements Serializable {
         this.isFavorited = isFavorited;
     }
 
+    /**
+     * Intended for use when displaying ad information in card view
+     * @return
+     */
     public String getContent() {
         return price.getValue() + ",- in " + location;
     }
