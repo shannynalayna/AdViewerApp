@@ -88,22 +88,14 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
                 holder.card_favorite_button.setImageResource(R.drawable.favorited);
             }
 
-            /**TODO: Change the appearance of the button once the user has interacted with it
-             * This could mean either:
-             *  - changing the actual drawable resource being used
-             *  - changing the color of the button itself
-             */
             holder.card_favorite_button.setOnClickListener(new View.OnClickListener() {
 
-                //TODO: This may be slightly too generic, may set the boolean value for entire
                 boolean clicked = false;
 
                 public void onClick(View v) {
-                    ImageButton ib = (ImageButton) v;
                     clicked = true; // slightly too generic ?
 
 
-                    // TODO: Check what color the button should maintain in which view
                     if(!ad.getIsFavorited()) {
                         ad.setIsFavorited(true);
                         holder.card_favorite_button.setImageResource(R.drawable.favorited);
@@ -149,12 +141,12 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
         ViewHolder(View v) {
             super(v);
 
-            card_title = (TextView) v.findViewById(R.id.card_title);
-            card_content = (TextView) v.findViewById(R.id.card_content);
-            card_image = (ImageView) v.findViewById(R.id.card_image);
-            card_favorite_button = (ImageButton) v.findViewById(R.id.favorite_imageButton);
-            card_relative_layout = (RelativeLayout) v.findViewById(R.id.card_relative_layout);
-            card_view = (CardView) v.findViewById(R.id.card_view);
+            card_title = v.findViewById(R.id.card_title);
+            card_content = v.findViewById(R.id.card_content);
+            card_image = v.findViewById(R.id.card_image);
+            card_favorite_button = v.findViewById(R.id.favorite_imageButton);
+            card_relative_layout = v.findViewById(R.id.card_relative_layout);
+            card_view = v.findViewById(R.id.card_view);
         }
     }
 
