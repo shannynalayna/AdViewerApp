@@ -1,6 +1,8 @@
 package satel.adsviewer;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -82,25 +85,33 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
              * favorited
              */
             if(ad.getIsFavorited()) {
-                holder.card_favorite_check.setText(R.string.removeFavorite);
-                holder.card_favorite_check.setChecked(true);
+                holder.card_favorite_button.setImageResource(R.drawable.favorited);
             }
 
-            holder.card_favorite_check.setOnClickListener(new View.OnClickListener() {
+            /**TODO: Change the appearance of the button once the user has interacted with it
+             * This could mean either:
+             *  - changing the actual drawable resource being used
+             *  - changing the color of the button itself
+             */
+            holder.card_favorite_button.setOnClickListener(new View.OnClickListener() {
+
+                //TODO: This may be slightly too generic, may set the boolean value for entire
+                boolean clicked = false;
 
                 public void onClick(View v) {
-                    CheckBox cb = (CheckBox) v;
+                    ImageButton ib = (ImageButton) v;
+                    clicked = true; // slightly too generic ?
 
-                    if(holder.card_favorite_check.isChecked() && !ad.getIsFavorited()) {
+
+                    // TODO: Check what color the button should maintain in which view
+                    if(!ad.getIsFavorited()) {
                         ad.setIsFavorited(true);
-                        holder.card_favorite_check.setText(R.string.removeFavorite);
-                        holder.card_favorite_check.setChecked(true);
+                        holder.card_favorite_button.setImageResource(R.drawable.favorited);
                     }
 
-                    else if(!holder.card_favorite_check.isChecked() && ad.getIsFavorited()) {
+                    else if(ad.getIsFavorited()) {
                         ad.setIsFavorited(false);
-                        holder.card_favorite_check.setText(R.string.addFavorite);
-                        holder.card_favorite_check.setChecked(false);
+                        holder.card_favorite_button.setImageResource(R.drawable.favorite_button);
                     }
 
                 }
@@ -127,7 +138,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
         public TextView card_title;
         public TextView card_content;
         public ImageView card_image;
-        public CheckBox card_favorite_check;
+        public ImageButton card_favorite_button;
         public RelativeLayout card_relative_layout;
         public CardView card_view;
 
@@ -141,7 +152,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
             card_title = (TextView) v.findViewById(R.id.card_title);
             card_content = (TextView) v.findViewById(R.id.card_content);
             card_image = (ImageView) v.findViewById(R.id.card_image);
-            card_favorite_check = (CheckBox) v.findViewById(R.id.favoriteCheck);
+            card_favorite_button = (ImageButton) v.findViewById(R.id.favorite_imageButton);
             card_relative_layout = (RelativeLayout) v.findViewById(R.id.card_relative_layout);
             card_view = (CardView) v.findViewById(R.id.card_view);
         }

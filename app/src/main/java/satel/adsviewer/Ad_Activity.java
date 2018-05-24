@@ -3,7 +3,7 @@ package satel.adsviewer;
 import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Main Activity for application:
+ * Main Activity for application:8
  *
  *  - Fetches ads from the remote JSON resource
  *  - Maintains overall list of ads as well as ads marked 'favorite"
@@ -86,7 +86,7 @@ public class Ad_Activity extends AppCompatActivity {
 
         AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
 
-        RecyclerView.LayoutManager adLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager adLayoutManager = new GridLayoutManager(this, 2);
 
         AdRecyclerView.setLayoutManager(adLayoutManager);
     }
