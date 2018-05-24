@@ -1,6 +1,8 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -51,7 +53,7 @@ public class Ad_Activity extends AppCompatActivity {
     public Toast toast;
     public int duration = Toast.LENGTH_SHORT;
     private RecyclerView AdRecyclerView;
-    private RecyclerView.Adapter AdAdapter;
+    private RecyclerView.Adapter adAdapter;
 
 
     /**
@@ -82,13 +84,33 @@ public class Ad_Activity extends AppCompatActivity {
         remoteJSON = getString(R.string.remoteJSONresource);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
-        fetchAds();
 
         AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
 
         RecyclerView.LayoutManager adLayoutManager = new GridLayoutManager(this, 2);
 
         AdRecyclerView.setLayoutManager(adLayoutManager);
+
+
+        // Check here if shared preferences is empty ?
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String jsonAdsString = preferences.getString("persistAds", null);
+        if(jsonAdsString != null && !jsonAdsString.isEmpty()) {
+
+            ads = Arrays.asList(gson.fromJson(jsonAdsString, Ad_Block[].class));
+            toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
+            toast.show();
+            adLoading.setVisibility(View.GONE);
+            adAdapter = new AdBlockRecyclerViewAdapter(ads, this,
+                    favoritesView);
+            AdRecyclerView.setAdapter(adAdapter);
+
+        }
+        else {
+            fetchAds();
+        }
+
+
     }
 
     /**
@@ -112,17 +134,19 @@ public class Ad_Activity extends AppCompatActivity {
         @Override
         public void onResponse(String resp) {
             try {
+                //This is where we are making the request to the JSON Object to get the ads
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
                 ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
 
                 Log.i("Ad_Activity", "Ads Successfully Saved!");
+
                 toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
                 toast.show();
                 adLoading.setVisibility(View.GONE);
-                AdAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext(),
+                adAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext(),
                                                             favoritesView);
-                AdRecyclerView.setAdapter(AdAdapter);
+                AdRecyclerView.setAdapter(adAdapter);
             } catch (JSONException e) {
                 toast = Toast.makeText(getApplicationContext(), R.string.fail_ads_loaded, duration);
                 toast.show();
@@ -143,6 +167,23 @@ public class Ad_Activity extends AppCompatActivity {
             Log.e("ad_activity_layout", err.toString());
         }
     };
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //TODO: Save the state here so that the user can return to previously saved ads
+        // Here's what I'm thinking: write it into a json object, then save that in shared pref
+        String adsStringList = gson.toJson(ads);
+        Log.i("ON PAUSE", "Ads String List successfully saved");
+
+
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("persistAds", adsStringList);
+        editor.apply();
+        editor.commit();
+        // At this point, the json object holding the ads list should exist
+    }
 
     /**
      * @param item
@@ -181,7 +222,7 @@ public class Ad_Activity extends AppCompatActivity {
                     else {
                         favoritesView = false;
                         setTitle(R.string.app_name);
-                        AdRecyclerView.setAdapter(AdAdapter);
+                        AdRecyclerView.setAdapter(adAdapter);
                     }
                 } catch (Exception e) {
                     Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
