@@ -58,7 +58,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.ad_card, parent, false);
+                .inflate(R.layout.adCard, parent, false);
         ViewHolder holder = new ViewHolder(v);
         return holder;
     }
