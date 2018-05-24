@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <item
         android:id="@+id/action_favorite"
-        android:icon="@drawable/star_icon"
+        android:icon="@drawable/favorite_button"
         android:iconTint="@color/colorAccentDarkHighlight"
         android:title="@string/addFavorite"
         app:showAsAction="always" />
