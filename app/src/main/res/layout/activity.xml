@@ -20,7 +20,7 @@
         android:scrollbarSize="5dp"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
-        android:tag="recyclerView"
+        android:tag="recycler_view"
         tools:context="satel.adsviewer.adActivity"
         tools:listitem="@layout/ad_card" />
 
