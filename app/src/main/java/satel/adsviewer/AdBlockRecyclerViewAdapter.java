@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,18 +33,13 @@ import java.util.List;
  */
 public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
                                                     <AdBlockRecyclerViewAdapter.ViewHolder> {
-
-    private List<Ad_Block> ads;
+    private List<adBlock> ads;
     private Context context;
     private boolean favoritesView;
     private String appendUrl;
 
-    /**
-     * @param ads
-     * @param context
-     * @param favoritesView
-     */
-    public AdBlockRecyclerViewAdapter(List<Ad_Block> ads, Context context, boolean favoritesView) {
+
+    public AdBlockRecyclerViewAdapter(List<adBlock> ads, Context context, boolean favoritesView) {
         this.ads = ads;
         this.context = context;
         this.favoritesView = favoritesView;
@@ -69,7 +65,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
      */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final Ad_Block ad = ads.get(position);
+        final adBlock ad = ads.get(position);
 
         try {
             /**
@@ -95,12 +91,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
              */
             holder.card_favorite_button.setOnClickListener(new View.OnClickListener() {
 
-                //TODO: This may be slightly too generic, may set the boolean value for entire
-                boolean clicked = false;
-
                 public void onClick(View v) {
-                    ImageButton ib = (ImageButton) v;
-                    clicked = true; // slightly too generic ?
 
 
                     // TODO: Check what color the button should maintain in which view
@@ -149,12 +140,12 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
         ViewHolder(View v) {
             super(v);
 
-            card_title = (TextView) v.findViewById(R.id.card_title);
-            card_content = (TextView) v.findViewById(R.id.card_content);
-            card_image = (ImageView) v.findViewById(R.id.card_image);
-            card_favorite_button = (ImageButton) v.findViewById(R.id.favorite_imageButton);
-            card_relative_layout = (RelativeLayout) v.findViewById(R.id.card_relative_layout);
-            card_view = (CardView) v.findViewById(R.id.card_view);
+            card_title =  v.findViewById(R.id.card_title);
+            card_content = v.findViewById(R.id.card_content);
+            card_image = v.findViewById(R.id.card_image);
+            card_favorite_button = v.findViewById(R.id.favorite_imageButton);
+            card_relative_layout = v.findViewById(R.id.card_relative_layout);
+            card_view = v.findViewById(R.id.card_view);
         }
     }
 

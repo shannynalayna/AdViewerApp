@@ -1,10 +1,6 @@
 package satel.adsviewer;
 
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -14,12 +10,12 @@ import java.io.Serializable;
  * Class holds the information from the parsed JSON resource link:
  *
  */
-public class Ad_Block implements Serializable {
+public class adBlock implements Serializable {
 
     @SerializedName("image") // Used to parse JSON
     private imageUrl imageUrl = new imageUrl();
 
-    private Price price = new Price();
+    private satel.adsviewer.price price = new price();
 
     private String description = "No Description Available";
     private String location = "No Location Available";
@@ -29,11 +25,11 @@ public class Ad_Block implements Serializable {
 
     private boolean isFavorited = false;
 
-    public Ad_Block() {
+    public adBlock() {
     }
 
-    public Ad_Block(imageUrl imageUrl, Price price, String description,
-                    String location, String imageID) {
+    public adBlock(imageUrl imageUrl, satel.adsviewer.price price, String description,
+                   String location, String imageID) {
         this.imageUrl = imageUrl;
         this.price = price;
         this.description = description;
@@ -41,9 +37,9 @@ public class Ad_Block implements Serializable {
         this.imageID = imageID;
     }
 
-    public Ad_Block(imageUrl imageUrl, Price price, String description,
-                    String location, String title, boolean isFavorited,
-                    String imageID) {
+    public adBlock(imageUrl imageUrl, satel.adsviewer.price price, String description,
+                   String location, String title, boolean isFavorited,
+                   String imageID) {
         this.imageUrl = imageUrl;
         this.price = price;
         this.description = description;
@@ -54,7 +50,7 @@ public class Ad_Block implements Serializable {
 
     }
 
-    /* Getters and Setters for Ad_Block */
+    /* Getters and Setters for adBlock */
     public String getImageID() {
         return imageID;
     }
@@ -75,7 +71,7 @@ public class Ad_Block implements Serializable {
         return price.getValue();
     }
 
-    public void setPriceValue(Price priceValue) {
+    public void setPriceValue(satel.adsviewer.price priceValue) {
         this.price = price;
     }
 
@@ -104,6 +100,7 @@ public class Ad_Block implements Serializable {
     }
 
     /**
+     * TODO: Separate this for presenting information
      * Intended for use when displaying ad information in card view
      * @return
      */

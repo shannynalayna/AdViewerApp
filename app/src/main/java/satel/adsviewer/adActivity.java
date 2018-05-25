@@ -41,13 +41,13 @@ import java.util.List;
  *      - Recycler view utilized to make scrolling through ads lists easier
  *  - Creates the adapter for the recycler view used for this application
  */
-public class Ad_Activity extends AppCompatActivity {
+public class adActivity extends AppCompatActivity {
 
     private String remoteJSON;
     private RequestQueue reqQueue;
     private Gson gson;
-    private static List<Ad_Block> ads = new ArrayList<Ad_Block>();
-    private static List<Ad_Block> favorites = new ArrayList<Ad_Block>();
+    private static List<adBlock> ads = new ArrayList<adBlock>();
+    private static List<adBlock> favorites = new ArrayList<adBlock>();
     private boolean favoritesView = false;
     private ProgressBar adLoading;
     public Toast toast;
@@ -91,28 +91,34 @@ public class Ad_Activity extends AppCompatActivity {
 
         AdRecyclerView.setLayoutManager(adLayoutManager);
 
+        Log.i("JsonAdsString", "Getting ads still");
+
 
         // Check here if shared preferences is empty ?
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String jsonAdsString = preferences.getString("persistAds", null);
-        if(jsonAdsString != null && !jsonAdsString.isEmpty()) {
+        if(jsonAdsString != null && jsonAdsString != "[]") {
+            ads = Arrays.asList(gson.fromJson(jsonAdsString, adBlock[].class));
 
-            ads = Arrays.asList(gson.fromJson(jsonAdsString, Ad_Block[].class));
             toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
             toast.show();
             adLoading.setVisibility(View.GONE);
-            adAdapter = new AdBlockRecyclerViewAdapter(ads, this,
-                    favoritesView);
-            AdRecyclerView.setAdapter(adAdapter);
-
+            setView();
         }
         else {
             fetchAds();
         }
 
-
     }
 
+
+    private void setView() {
+        adLoading.setVisibility(View.GONE);
+        adAdapter = new AdBlockRecyclerViewAdapter(ads, this,
+                favoritesView);
+        AdRecyclerView.setAdapter(adAdapter);
+
+    }
     /**
      * Making request separate from main thread
      */
@@ -137,20 +143,17 @@ public class Ad_Activity extends AppCompatActivity {
                 //This is where we are making the request to the JSON Object to get the ads
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
-                ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
+                ads = Arrays.asList(gson.fromJson(String.valueOf(items), adBlock[].class));
 
-                Log.i("Ad_Activity", "Ads Successfully Saved!");
+                Log.i("adActivity", "Ads Successfully Saved!");
 
                 toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
                 toast.show();
-                adLoading.setVisibility(View.GONE);
-                adAdapter = new AdBlockRecyclerViewAdapter(ads, getApplicationContext(),
-                                                            favoritesView);
-                AdRecyclerView.setAdapter(adAdapter);
+                setView();
             } catch (JSONException e) {
                 toast = Toast.makeText(getApplicationContext(), R.string.fail_ads_loaded, duration);
                 toast.show();
-                Log.e("Ad_Activity", "Error saving ads");
+                Log.e("adActivity", "Error saving ads");
                 e.printStackTrace();
             }
         }
@@ -239,9 +242,9 @@ public class Ad_Activity extends AppCompatActivity {
      * @param ads
      * @return
      */
-    public static int favoriteCount(List<Ad_Block> ads) {
+    public static int favoriteCount(List<adBlock> ads) {
         int count = 0;
-        for(Ad_Block ad : ads) {
+        for(adBlock ad : ads) {
             if(ad.getIsFavorited()) {
                 count++;
             }
@@ -254,8 +257,8 @@ public class Ad_Activity extends AppCompatActivity {
      * independent of which view is being displayed
      */
     public static void updateFavorites() {
-        favorites = new ArrayList<Ad_Block>();
-        for (Ad_Block ad : ads) {
+        favorites = new ArrayList<adBlock>();
+        for (adBlock ad : ads) {
             if (ad.getIsFavorited()) {
                 favorites.add(ad);
             }

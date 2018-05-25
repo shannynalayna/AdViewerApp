@@ -9,9 +9,4 @@
         <item name="android:colorBackground">@color/colorHighlight</item>
     </style>
 
-    <style name="AdsViewerTheme" parent="AppTheme" >
-        <item name="android:textColorSecondary">@color/colorAccentDarkHighlight</item>
-        <item name="android:textColor">@color/colorBasic</item>
-    </style>
-
 </resources>
