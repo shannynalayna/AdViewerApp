@@ -46,13 +46,13 @@ public class adActivity extends AppCompatActivity {
     private String remoteJSON;
     private RequestQueue reqQueue;
     private Gson gson;
-    private static List<adBlock> ads = new ArrayList<adBlock>();
-    private static List<adBlock> favorites = new ArrayList<adBlock>();
+    private static List<Ad_Block> ads = new ArrayList<Ad_Block>();
+    private static List<Ad_Block> favorites = new ArrayList<Ad_Block>();
     private boolean favoritesView = false;
     private ProgressBar adLoading;
     public Toast toast;
     public int duration = Toast.LENGTH_SHORT;
-    private RecyclerView AdRecyclerView;
+    private RecyclerView adRecyclerView;
     private RecyclerView.Adapter adAdapter;
 
 
@@ -75,7 +75,7 @@ public class adActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ad_activity_layout);
+        setContentView(R.layout.activity);
 
         reqQueue = Volley.newRequestQueue(this);
         adLoading = (ProgressBar) findViewById(R.id.adProgressBar);
@@ -85,40 +85,30 @@ public class adActivity extends AppCompatActivity {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
 
-        AdRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
+        adRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
 
         RecyclerView.LayoutManager adLayoutManager = new GridLayoutManager(this, 2);
 
-        AdRecyclerView.setLayoutManager(adLayoutManager);
-
-        Log.i("JsonAdsString", "Getting ads still");
+        adRecyclerView.setLayoutManager(adLayoutManager);
 
 
         // Check here if shared preferences is empty ?
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String jsonAdsString = preferences.getString("persistAds", null);
-        if(jsonAdsString != null && jsonAdsString != "[]") {
-            ads = Arrays.asList(gson.fromJson(jsonAdsString, adBlock[].class));
+        if(jsonAdsString != null && !jsonAdsString.isEmpty()) {
 
+            ads = Arrays.asList(gson.fromJson(jsonAdsString, Ad_Block[].class));
             toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
             toast.show();
-            adLoading.setVisibility(View.GONE);
             setView();
         }
         else {
             fetchAds();
         }
 
-    }
-
-
-    private void setView() {
-        adLoading.setVisibility(View.GONE);
-        adAdapter = new AdBlockRecyclerViewAdapter(ads, this,
-                favoritesView);
-        AdRecyclerView.setAdapter(adAdapter);
 
     }
+
     /**
      * Making request separate from main thread
      */
@@ -126,6 +116,12 @@ public class adActivity extends AppCompatActivity {
         StringRequest req = new StringRequest(Request.Method.GET, remoteJSON,
                 onAdsLoaded, onAdsError);
         reqQueue.add(req);
+    }
+
+    private void setView() {
+        adLoading.setVisibility(View.GONE);
+        adAdapter = new adBlockRecyclerViewAdapter(ads, getApplicationContext(), favoritesView);
+        adRecyclerView.setAdapter(adAdapter);
     }
 
     /**
@@ -143,7 +139,7 @@ public class adActivity extends AppCompatActivity {
                 //This is where we are making the request to the JSON Object to get the ads
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
-                ads = Arrays.asList(gson.fromJson(String.valueOf(items), adBlock[].class));
+                ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
 
                 Log.i("adActivity", "Ads Successfully Saved!");
 
@@ -167,7 +163,7 @@ public class adActivity extends AppCompatActivity {
         public void onErrorResponse(VolleyError err) {
             toast = Toast.makeText(getApplicationContext(), R.string.fail_ads_loaded, duration);
             toast.show();
-            Log.e("ad_activity_layout", err.toString());
+            Log.e("adActivityLayout", err.toString());
         }
     };
 
@@ -175,8 +171,6 @@ public class adActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //TODO: Save the state here so that the user can return to previously saved ads
-        // Here's what I'm thinking: write it into a json object, then save that in shared pref
         String adsStringList = gson.toJson(ads);
         Log.i("ON PAUSE", "Ads String List successfully saved");
 
@@ -196,6 +190,7 @@ public class adActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
 
+        // TODO: Take this out of the activity, throw into the logic portion
         //switch statement enables further modification, more action bar items
         switch (item.getItemId()) {
             case R.id.action_favorite:
@@ -209,13 +204,13 @@ public class adActivity extends AppCompatActivity {
 
                             setTitle(R.string.FavoritesDisplay);
 
-                            AdBlockRecyclerViewAdapter favoritesAdAdapter =
-                                    new AdBlockRecyclerViewAdapter(favorites, getApplicationContext(),
+                            adBlockRecyclerViewAdapter favoritesAdAdapter =
+                                    new adBlockRecyclerViewAdapter(favorites, getApplicationContext(),
                                             favoritesView);
 
                             adLoading.setVisibility(View.GONE);
 
-                            AdRecyclerView.setAdapter(favoritesAdAdapter);
+                            adRecyclerView.setAdapter(favoritesAdAdapter);
                         }
                         else {
                             toast = Toast.makeText(getApplicationContext(), R.string.noFavorites, duration);
@@ -225,7 +220,7 @@ public class adActivity extends AppCompatActivity {
                     else {
                         favoritesView = false;
                         setTitle(R.string.app_name);
-                        AdRecyclerView.setAdapter(adAdapter);
+                        adRecyclerView.setAdapter(adAdapter);
                     }
                 } catch (Exception e) {
                     Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
@@ -242,9 +237,9 @@ public class adActivity extends AppCompatActivity {
      * @param ads
      * @return
      */
-    public static int favoriteCount(List<adBlock> ads) {
+    public static int favoriteCount(List<Ad_Block> ads) {
         int count = 0;
-        for(adBlock ad : ads) {
+        for(Ad_Block ad : ads) {
             if(ad.getIsFavorited()) {
                 count++;
             }
@@ -257,8 +252,8 @@ public class adActivity extends AppCompatActivity {
      * independent of which view is being displayed
      */
     public static void updateFavorites() {
-        favorites = new ArrayList<adBlock>();
-        for (adBlock ad : ads) {
+        favorites = new ArrayList<Ad_Block>();
+        for (Ad_Block ad : ads) {
             if (ad.getIsFavorited()) {
                 favorites.add(ad);
             }
