@@ -66,37 +66,21 @@ public class adBlockRecyclerViewAdapter extends RecyclerView.Adapter
 
         try {
             /*
-              Placeholder image used as url may be null
+             * Setting up the card to contain all of the ad information
+             * Assuming, this is fine to be placed here rather than in "business logic"
              */
             Glide.with(context).load(appendUrl + ad.getImageUrl())
                     .placeholder(R.drawable.no_image_available).into(holder.card_image);
             holder.card_content.setText(ad.getContent());
             holder.card_title.setText(ad.getDescription());
+            holder.card_favorite_button.setImageResource(adLogic.maintainFavoriteIndication(ad));
 
-            /*
-              Ensuring the checkbox maintains it's checked state if the ad is
-              favorited
-             */
-            if(ad.getIsFavorited()) {
-                holder.card_favorite_button.setImageResource(R.drawable.favorited);
-            }
-
+            /* TODO: Switch to lambda expression here */
             holder.card_favorite_button.setOnClickListener(new View.OnClickListener() {
 
 
                 public void onClick(View v) {
-
-                    //TODO: Is it necessary to separate out this from the view adapter ?
-                    if(!ad.getIsFavorited()) {
-                        adLogic.adInteraction(ad, true);
-                        holder.card_favorite_button.setImageResource(R.drawable.favorited);
-                    }
-
-                    else if(ad.getIsFavorited()) {
-                        adLogic.adInteraction(ad, false);
-                        holder.card_favorite_button.setImageResource(R.drawable.favorite_button);
-                    }
-
+                    holder.card_favorite_button.setImageResource(adLogic.adInteraction(ad));
                 }
             });
 
@@ -114,9 +98,7 @@ public class adBlockRecyclerViewAdapter extends RecyclerView.Adapter
         return ads.size();
     }
 
-
-    protected class ViewHolder extends RecyclerView.ViewHolder {
-
+    class ViewHolder extends RecyclerView.ViewHolder {
         //Defining View objects
         final TextView card_title;
         final TextView card_content;
@@ -135,7 +117,4 @@ public class adBlockRecyclerViewAdapter extends RecyclerView.Adapter
             card_favorite_button = v.findViewById(R.id.favorite_imageButton);
         }
     }
-
-
-
 }

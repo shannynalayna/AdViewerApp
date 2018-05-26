@@ -108,9 +108,4 @@ public class adBlock implements Serializable {
         return price.getValue() + ",- in " + location;
     }
 
-    public String toString() {
-        return "[imageID=" + imageID + ", imageUrl=" + imageUrl + ", price=" + price +
-                ", description=" + description + ", location=" + location +
-                ", isFavorited" + isFavorited + "]";
-    }
 }

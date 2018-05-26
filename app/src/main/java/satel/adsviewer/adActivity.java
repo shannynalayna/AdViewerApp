@@ -47,8 +47,6 @@ public class adActivity extends AppCompatActivity {
     private RequestQueue reqQueue;
     private Gson gson;
     private static List<adBlock> ads = new ArrayList<>();
-    private static List<adBlock> favorites = new ArrayList<>();
-    private boolean favoritesView = false;
     private ProgressBar adLoading;
     private Toast toast;
     private final int duration = Toast.LENGTH_SHORT;
@@ -76,6 +74,8 @@ public class adActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity);
+
+        adLogic.setContext(this);
 
         reqQueue = Volley.newRequestQueue(this);
         adLoading = findViewById(R.id.adProgressBar);
@@ -171,15 +171,7 @@ public class adActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        String adsStringList = gson.toJson(ads);
-        Log.i("ON PAUSE", "Ads String List successfully saved");
-
-
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("persistAds", adsStringList);
-        editor.apply();
-        editor.commit();
-        // At this point, the json object holding the ads list should exist
+        adLogic.saveState(ads, gson, this);
     }
 
     /**
@@ -188,76 +180,23 @@ public class adActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
+        /*
+        * Handle presses on the action bar items,
+        * switch statement enables further modification, more action bar items
+        */
 
-        // TODO: Take this out of the activity, throw into the logic portion
-        //switch statement enables further modification, more action bar items
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
-                    if(!favoritesView) {
-                        int favoriteCount = favoriteCount(ads);
-                        if(favoriteCount != 0) {
-                            favoritesView = true;
-                            adLoading.setVisibility(View.VISIBLE);
-                            updateFavorites();
-
-                            setTitle(R.string.FavoritesDisplay);
-
-                            adBlockRecyclerViewAdapter favoritesAdAdapter =
-                                    new adBlockRecyclerViewAdapter(favorites, getApplicationContext());
-
-                            adLoading.setVisibility(View.GONE);
-
-                            adRecyclerView.setAdapter(favoritesAdAdapter);
-                        }
-                        else {
-                            toast = Toast.makeText(getApplicationContext(), R.string.noFavorites, duration);
-                            toast.show();
-                        }
-                    }
-                    else {
-                        favoritesView = false;
-                        setTitle(R.string.app_name);
-                        adRecyclerView.setAdapter(adAdapter);
-                    }
+                    adRecyclerView.setAdapter(adLogic.getAdAdapter(ads,
+                            getApplicationContext(), adLoading));
                 } catch (Exception e) {
-                    Log.e("onOptionsItemSelected", "Error Loading Favorite Ads");
+                    Log.e("Menu Item Selected", "Error Displaying Favorite Ads");
                     e.printStackTrace();
                 }
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    /**
-     * @param ads list of loaded ads
-     * @return count of favorited ads
-     */
-    private static int favoriteCount(List<adBlock> ads) {
-        int count = 0;
-        for(adBlock ad : ads) {
-            if(ad.getIsFavorited()) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Updating favorites in the case that the user has selected / deselected certain ads
-     * independent of which view is being displayed
-     */
-    private static void updateFavorites() {
-        favorites = new ArrayList<>();
-        for (adBlock ad : ads) {
-            if (ad.getIsFavorited()) {
-                favorites.add(ad);
-            }
-        }
-    }
-
-
 }
