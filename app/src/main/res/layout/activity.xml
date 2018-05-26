@@ -22,7 +22,7 @@
         android:scrollbars="vertical"
         android:tag="recycler_view"
         tools:context="satel.adsviewer.adActivity"
-        tools:listitem="@layout/ad_card" />
+        tools:listitem="@layout/card" />
 
 
     <ProgressBar
