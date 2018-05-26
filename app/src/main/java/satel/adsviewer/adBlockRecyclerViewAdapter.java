@@ -1,15 +1,12 @@
 package satel.adsviewer;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -18,28 +15,32 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * Adapter for the Recycler View
- * Intended to translate the data from a single Ad_Block to the views included
+ * Intended to translate the data from a single adBlock to the views included
  * in the card view:
  *  - image view
  *  - text view (for ad description)
  *  - text view (for ad price / location )
  *  - checkbox (to add / remove ad from list of favorites)
  */
-public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
-                                                    <AdBlockRecyclerViewAdapter.ViewHolder> {
+public class adBlockRecyclerViewAdapter extends RecyclerView.Adapter
+                                                    <adBlockRecyclerViewAdapter.ViewHolder> {
+
     private List<adBlock> ads;
     private Context context;
     private boolean favoritesView;
     private String appendUrl;
 
-
-    public AdBlockRecyclerViewAdapter(List<adBlock> ads, Context context, boolean favoritesView) {
+    /**
+     * @param ads
+     * @param context
+     * @param favoritesView
+     */
+    public adBlockRecyclerViewAdapter(List<adBlock> ads, Context context, boolean favoritesView) {
         this.ads = ads;
         this.context = context;
         this.favoritesView = favoritesView;
@@ -54,7 +55,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.ad_card, parent, false);
+                .inflate(R.layout.card, parent, false);
         ViewHolder holder = new ViewHolder(v);
         return holder;
     }
@@ -84,17 +85,14 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
                 holder.card_favorite_button.setImageResource(R.drawable.favorited);
             }
 
-            /**TODO: Change the appearance of the button once the user has interacted with it
-             * This could mean either:
-             *  - changing the actual drawable resource being used
-             *  - changing the color of the button itself
-             */
             holder.card_favorite_button.setOnClickListener(new View.OnClickListener() {
 
+                boolean clicked = false;
+
                 public void onClick(View v) {
+                    clicked = true; // slightly too generic ?
 
 
-                    // TODO: Check what color the button should maintain in which view
                     if(!ad.getIsFavorited()) {
                         ad.setIsFavorited(true);
                         holder.card_favorite_button.setImageResource(R.drawable.favorited);
@@ -140,7 +138,7 @@ public class AdBlockRecyclerViewAdapter extends RecyclerView.Adapter
         ViewHolder(View v) {
             super(v);
 
-            card_title =  v.findViewById(R.id.card_title);
+            card_title = v.findViewById(R.id.card_title);
             card_content = v.findViewById(R.id.card_content);
             card_image = v.findViewById(R.id.card_image);
             card_favorite_button = v.findViewById(R.id.favorite_imageButton);

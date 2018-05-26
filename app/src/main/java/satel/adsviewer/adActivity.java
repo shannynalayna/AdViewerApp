@@ -46,8 +46,8 @@ public class adActivity extends AppCompatActivity {
     private String remoteJSON;
     private RequestQueue reqQueue;
     private Gson gson;
-    private static List<Ad_Block> ads = new ArrayList<Ad_Block>();
-    private static List<Ad_Block> favorites = new ArrayList<Ad_Block>();
+    private static List<adBlock> ads = new ArrayList<adBlock>();
+    private static List<adBlock> favorites = new ArrayList<adBlock>();
     private boolean favoritesView = false;
     private ProgressBar adLoading;
     public Toast toast;
@@ -97,7 +97,7 @@ public class adActivity extends AppCompatActivity {
         String jsonAdsString = preferences.getString("persistAds", null);
         if(jsonAdsString != null && !jsonAdsString.isEmpty()) {
 
-            ads = Arrays.asList(gson.fromJson(jsonAdsString, Ad_Block[].class));
+            ads = Arrays.asList(gson.fromJson(jsonAdsString, adBlock[].class));
             toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
             toast.show();
             setView();
@@ -139,7 +139,7 @@ public class adActivity extends AppCompatActivity {
                 //This is where we are making the request to the JSON Object to get the ads
                 JSONObject jsonObj = new JSONObject(resp);
                 JSONArray items = jsonObj.getJSONArray("items");
-                ads = Arrays.asList(gson.fromJson(String.valueOf(items), Ad_Block[].class));
+                ads = Arrays.asList(gson.fromJson(String.valueOf(items), adBlock[].class));
 
                 Log.i("adActivity", "Ads Successfully Saved!");
 
@@ -237,9 +237,9 @@ public class adActivity extends AppCompatActivity {
      * @param ads
      * @return
      */
-    public static int favoriteCount(List<Ad_Block> ads) {
+    public static int favoriteCount(List<adBlock> ads) {
         int count = 0;
-        for(Ad_Block ad : ads) {
+        for(adBlock ad : ads) {
             if(ad.getIsFavorited()) {
                 count++;
             }
@@ -252,8 +252,8 @@ public class adActivity extends AppCompatActivity {
      * independent of which view is being displayed
      */
     public static void updateFavorites() {
-        favorites = new ArrayList<Ad_Block>();
-        for (Ad_Block ad : ads) {
+        favorites = new ArrayList<adBlock>();
+        for (adBlock ad : ads) {
             if (ad.getIsFavorited()) {
                 favorites.add(ad);
             }
