@@ -32,7 +32,7 @@ public class adBlockRecyclerViewAdapter extends RecyclerView.Adapter
     private final List<adBlock> ads;
     private final Context context;
     private final String appendUrl;
-    private adLogic controller;
+    private final adLogic controller;
 
     /**
      * @param ads list of loaded ads

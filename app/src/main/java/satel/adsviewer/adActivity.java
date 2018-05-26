@@ -12,9 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
-/**
+/*
  * Main Activity for application:8
- *
  *  - Fetches ads from the remote JSON resource
  *  - Maintains overall list of ads as well as ads marked 'favorite"
  *  - Creates / inflates the view for the application activity
@@ -46,24 +45,15 @@ public class adActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity);
-
         adLoading = findViewById(R.id.adProgressBar);
         adLoading.setVisibility(View.VISIBLE);
-
-
         adRecyclerView = findViewById(R.id.recyclerViewList);
-
         RecyclerView.LayoutManager adLayoutManager = new GridLayoutManager(this, 2);
-
         adRecyclerView.setLayoutManager(adLayoutManager);
-
         controller = new adLogic(this);
-
         controller.populateAds();
-
         adLoading.setVisibility(View.GONE);
         controller.setViewAdapter(adRecyclerView);
-
     }
 
     @Override
@@ -82,7 +72,6 @@ public class adActivity extends AppCompatActivity {
         * Handle presses on the action bar items,
         * switch statement enables further modification, more action bar items
         */
-
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
