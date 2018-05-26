@@ -1,8 +1,6 @@
 package satel.adsviewer;
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,24 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Main Activity for application:8
@@ -45,6 +25,7 @@ public class adActivity extends AppCompatActivity {
 
     private ProgressBar adLoading;
     private RecyclerView adRecyclerView;
+    private adLogic controller;
 
     /**
      * @param menu Option Menu
@@ -66,8 +47,6 @@ public class adActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity);
 
-        adLogic.setContext(this);
-
         adLoading = findViewById(R.id.adProgressBar);
         adLoading.setVisibility(View.VISIBLE);
 
@@ -78,16 +57,19 @@ public class adActivity extends AppCompatActivity {
 
         adRecyclerView.setLayoutManager(adLayoutManager);
 
-        adLogic.populateAds();
+        controller = new adLogic(this);
 
-        adLogic.setViewAdapter(adRecyclerView);
+        controller.populateAds();
+
+        adLoading.setVisibility(View.GONE);
+        controller.setViewAdapter(adRecyclerView);
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        adLogic.saveState();
+        controller.saveState();
     }
 
     /**
@@ -104,7 +86,7 @@ public class adActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
-                    adRecyclerView.setAdapter(adLogic.getAdAdapter(adLoading));
+                    adRecyclerView.setAdapter(controller.getAdAdapter(adLoading));
                 } catch (Exception e) {
                     Log.e("Menu Item Selected", "Error Displaying Favorite Ads");
                     e.printStackTrace();

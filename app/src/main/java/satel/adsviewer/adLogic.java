@@ -29,22 +29,23 @@ import java.util.List;
 
 public class adLogic {
 
-    private static boolean favoritesView = false;
-    private static Toast toast;
-    private static final int duration = Toast.LENGTH_SHORT;
+    private boolean favoritesView = false;
+    private Toast toast;
+    private final int duration = Toast.LENGTH_SHORT;
 
-    private static String remoteJSON = "https://gist.githubusercontent.com/3lvis/3799feea005ed49942dcb56386ecec2b/raw/63249144485884d279d55f4f3907e37098f55c74/discover.json";
-    private static RequestQueue reqQueue;
-    private static GsonBuilder gsonBuilder = new GsonBuilder();
-    private static Gson gson = gsonBuilder.create();
+    private RequestQueue reqQueue;
+    private final GsonBuilder gsonBuilder = new GsonBuilder();
+    private final Gson gson = gsonBuilder.create();
 
-    private static RecyclerView.Adapter adAdapter;
+    private RecyclerView.Adapter adAdapter;
 
-    private static List<adBlock> ads;
+    private List<adBlock> ads;
 
-    private static Context context;
-    private static RecyclerView v;
+    private final Context context;
 
+    adLogic(adActivity adActivity) {
+        this.context = adActivity;
+    }
 
 
     /* TODO: Fill in the logic for the rest of the application, serves as a middleman
@@ -56,7 +57,7 @@ public class adLogic {
     /*
      * The following methods replaced those originally used in adActivity
      */
-    static List<adBlock> updateFavorites(List<adBlock> ads) {
+    private List<adBlock> updateFavorites(List<adBlock> ads) {
         List<adBlock> favorites = new ArrayList<>();
         for (adBlock ad : ads) {
             if (ad.getIsFavorited()) {
@@ -67,7 +68,7 @@ public class adLogic {
     }
 
 
-    static int favoriteCount(List<adBlock> ads) {
+    private int favoriteCount(List<adBlock> ads) {
         int count = 0;
         for (adBlock ad : ads) {
             if(ad.getIsFavorited()) {
@@ -77,23 +78,19 @@ public class adLogic {
         return count;
     }
 
-    static boolean getFavoritesView() {
-        return favoritesView;
-    }
-
-    static void setFavoritesView(boolean choice) {
+    private void setFavoritesView(boolean choice) {
         favoritesView = choice;
     }
 
-    static adBlockRecyclerViewAdapter getAdAdapter(ProgressBar adLoading) {
-        adBlockRecyclerViewAdapter adAdapter = new adBlockRecyclerViewAdapter(ads, context);
+    adBlockRecyclerViewAdapter getAdAdapter(ProgressBar adLoading) {
+        adBlockRecyclerViewAdapter adAdapter = new adBlockRecyclerViewAdapter(ads, context, this);
         if(!favoritesView) {
             if(favoriteCount(ads) != 0) {
                 // Display the favorited ads
                 adLoading.setVisibility(View.VISIBLE);
                 setFavoritesView(true);
                 adAdapter = new adBlockRecyclerViewAdapter(updateFavorites(ads),
-                        context);
+                        context, this);
                 adLoading.setVisibility(View.GONE);
                 toast = Toast.makeText(context, "Displaying Favorites!", duration);
                 toast.show();
@@ -109,7 +106,7 @@ public class adLogic {
         return adAdapter;
     }
 
-    static void saveState() {
+    void saveState() {
         String adsStringList = gson.toJson(ads);
         SharedPreferences.Editor editor = PreferenceManager
                 .getDefaultSharedPreferences(context).edit();
@@ -118,7 +115,7 @@ public class adLogic {
         editor.commit();
     }
 
-    static void populateAds(){
+    void populateAds(){
         // First need to check if the ads are stored in local preferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String jsonAdsString = preferences.getString("persistAds", null);
@@ -135,13 +132,14 @@ public class adLogic {
         }
     }
 
-    private static void fetchAds(){
+    private void fetchAds(){
+        String remoteJSON = "https://gist.githubusercontent.com/3lvis/3799feea005ed49942dcb56386ecec2b/raw/63249144485884d279d55f4f3907e37098f55c74/discover.json";
         StringRequest req = new StringRequest(Request.Method.GET, remoteJSON,
                 onAdsLoaded, onAdsError);
         reqQueue.add(req);
     }
 
-    private static final Response.Listener<String> onAdsLoaded = new Response.Listener<String>() {
+    private final Response.Listener<String> onAdsLoaded = new Response.Listener<String>() {
 
         /**
          * @param resp Response from JSON req
@@ -163,7 +161,7 @@ public class adLogic {
         }
     };
 
-    private static final Response.ErrorListener onAdsError = new Response.ErrorListener() {
+    private final Response.ErrorListener onAdsError = new Response.ErrorListener() {
 
         /**
          * @param err Error getting response
@@ -176,7 +174,7 @@ public class adLogic {
         }
     };
 
-    static void setViewAdapter(RecyclerView v) {
+    void setViewAdapter(RecyclerView v) {
         v.setAdapter(adAdapter);
     }
 
@@ -185,7 +183,7 @@ public class adLogic {
     /*
      * The following methods replaced those originally used in adBlockRecyclerViewAdapter
      */
-    static int maintainFavoriteIndication(adBlock ad) {
+    int maintainFavoriteIndication(adBlock ad) {
         int returnResID;
         if(ad.getIsFavorited()) {
             returnResID = R.drawable.favorited;
@@ -195,7 +193,7 @@ public class adLogic {
         return returnResID;
     }
 
-    static int adInteraction(adBlock ad) {
+    int adInteraction(adBlock ad) {
         int returnResID;
         boolean choice = !ad.getIsFavorited();
         if(!ad.getIsFavorited()) {
@@ -209,18 +207,10 @@ public class adLogic {
         return returnResID;
     }
 
-    static List<adBlock> getAds(){
-        return ads;
-    }
 
-    static void updateAdapter() {
-        adAdapter = new adBlockRecyclerViewAdapter(ads, context);
+    private void updateAdapter() {
+        adAdapter = new adBlockRecyclerViewAdapter(ads, context, this);
     }
-
-    static void setContext(Context activityContext) {
-        context = activityContext;
-    }
-
 
 
 

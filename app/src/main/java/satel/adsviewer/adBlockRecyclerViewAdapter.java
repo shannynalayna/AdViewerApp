@@ -32,14 +32,16 @@ public class adBlockRecyclerViewAdapter extends RecyclerView.Adapter
     private final List<adBlock> ads;
     private final Context context;
     private final String appendUrl;
+    private adLogic controller;
 
     /**
      * @param ads list of loaded ads
      * @param context application context
      */
-    adBlockRecyclerViewAdapter(List<adBlock> ads, Context context) {
+    adBlockRecyclerViewAdapter(List<adBlock> ads, Context context, adLogic controller) {
         this.ads = ads;
         this.context = context;
+        this.controller = controller;
         appendUrl = context.getString(R.string.appendUrl);
     }
 
@@ -73,14 +75,14 @@ public class adBlockRecyclerViewAdapter extends RecyclerView.Adapter
                     .placeholder(R.drawable.no_image_available).into(holder.card_image);
             holder.card_content.setText(ad.getContent());
             holder.card_title.setText(ad.getDescription());
-            holder.card_favorite_button.setImageResource(adLogic.maintainFavoriteIndication(ad));
+            holder.card_favorite_button.setImageResource(controller.maintainFavoriteIndication(ad));
 
             /* TODO: Switch to lambda expression here */
             holder.card_favorite_button.setOnClickListener(new View.OnClickListener() {
 
 
                 public void onClick(View v) {
-                    holder.card_favorite_button.setImageResource(adLogic.adInteraction(ad));
+                    holder.card_favorite_button.setImageResource(controller.adInteraction(ad));
                 }
             });
 
