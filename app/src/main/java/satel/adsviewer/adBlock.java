@@ -10,6 +10,7 @@ import java.io.Serializable;
  * Class holds the information from the parsed JSON resource link:
  *
  */
+@SuppressWarnings("unused")
 public class adBlock implements Serializable {
 
     @SerializedName("image") // Used to parse JSON
@@ -72,7 +73,7 @@ public class adBlock implements Serializable {
     }
 
     public void setPriceValue(satel.adsviewer.price priceValue) {
-        this.price = price;
+        this.price = priceValue;
     }
 
     public String getDescription() {
@@ -101,7 +102,7 @@ public class adBlock implements Serializable {
 
     /**
      * Intended for use when displaying ad information in card view
-     * @return
+     * @return price and location combined
      */
     public String getContent() {
         return price.getValue() + ",- in " + location;

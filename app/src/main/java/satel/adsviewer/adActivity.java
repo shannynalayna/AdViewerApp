@@ -46,24 +46,24 @@ public class adActivity extends AppCompatActivity {
     private String remoteJSON;
     private RequestQueue reqQueue;
     private Gson gson;
-    private static List<adBlock> ads = new ArrayList<adBlock>();
-    private static List<adBlock> favorites = new ArrayList<adBlock>();
+    private static List<adBlock> ads = new ArrayList<>();
+    private static List<adBlock> favorites = new ArrayList<>();
     private boolean favoritesView = false;
     private ProgressBar adLoading;
-    public Toast toast;
-    public int duration = Toast.LENGTH_SHORT;
+    private Toast toast;
+    private final int duration = Toast.LENGTH_SHORT;
     private RecyclerView adRecyclerView;
     private RecyclerView.Adapter adAdapter;
 
 
     /**
-     * @param menu
-     * @return
+     * @param menu Option Menu
+     * @return super
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /** Inflating the menu to enable the view switch button
-         * between which list of ads to view
+        /* Inflating the menu to enable the view switch button
+          between which list of ads to view
          */
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actionmenu, menu);
@@ -78,14 +78,14 @@ public class adActivity extends AppCompatActivity {
         setContentView(R.layout.activity);
 
         reqQueue = Volley.newRequestQueue(this);
-        adLoading = (ProgressBar) findViewById(R.id.adProgressBar);
+        adLoading = findViewById(R.id.adProgressBar);
         adLoading.setVisibility(View.VISIBLE);
 
         remoteJSON = getString(R.string.remoteJSONresource);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
 
-        adRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewList);
+        adRecyclerView = findViewById(R.id.recyclerViewList);
 
         RecyclerView.LayoutManager adLayoutManager = new GridLayoutManager(this, 2);
 
@@ -120,7 +120,7 @@ public class adActivity extends AppCompatActivity {
 
     private void setView() {
         adLoading.setVisibility(View.GONE);
-        adAdapter = new adBlockRecyclerViewAdapter(ads, getApplicationContext(), favoritesView);
+        adAdapter = new adBlockRecyclerViewAdapter(ads, getApplicationContext());
         adRecyclerView.setAdapter(adAdapter);
     }
 
@@ -131,7 +131,7 @@ public class adActivity extends AppCompatActivity {
     private final Response.Listener<String> onAdsLoaded = new Response.Listener<String>() {
 
         /**
-         * @param resp
+         * @param resp Response from JSON req
          */
         @Override
         public void onResponse(String resp) {
@@ -157,7 +157,7 @@ public class adActivity extends AppCompatActivity {
     private final Response.ErrorListener onAdsError = new Response.ErrorListener() {
 
         /**
-         * @param err
+         * @param err Error getting response
          */
         @Override
         public void onErrorResponse(VolleyError err) {
@@ -183,8 +183,8 @@ public class adActivity extends AppCompatActivity {
     }
 
     /**
-     * @param item
-     * @return
+     * @param item Item selected from options menu
+     * @return success / failure bool from menu item selected and task performed
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -205,8 +205,7 @@ public class adActivity extends AppCompatActivity {
                             setTitle(R.string.FavoritesDisplay);
 
                             adBlockRecyclerViewAdapter favoritesAdAdapter =
-                                    new adBlockRecyclerViewAdapter(favorites, getApplicationContext(),
-                                            favoritesView);
+                                    new adBlockRecyclerViewAdapter(favorites, getApplicationContext());
 
                             adLoading.setVisibility(View.GONE);
 
@@ -234,10 +233,10 @@ public class adActivity extends AppCompatActivity {
     }
 
     /**
-     * @param ads
-     * @return
+     * @param ads list of loaded ads
+     * @return count of favorited ads
      */
-    public static int favoriteCount(List<adBlock> ads) {
+    private static int favoriteCount(List<adBlock> ads) {
         int count = 0;
         for(adBlock ad : ads) {
             if(ad.getIsFavorited()) {
@@ -251,8 +250,8 @@ public class adActivity extends AppCompatActivity {
      * Updating favorites in the case that the user has selected / deselected certain ads
      * independent of which view is being displayed
      */
-    public static void updateFavorites() {
-        favorites = new ArrayList<adBlock>();
+    private static void updateFavorites() {
+        favorites = new ArrayList<>();
         for (adBlock ad : ads) {
             if (ad.getIsFavorited()) {
                 favorites.add(ad);

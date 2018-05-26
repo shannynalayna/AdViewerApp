@@ -7,22 +7,19 @@ import java.io.Serializable;
  * Created by satel on 3/25/2018.
  */
 
+@SuppressWarnings("unused")
 public class imageUrl implements Serializable {
 
     private String url;
 
-    public imageUrl() {    }
-
-    public imageUrl(String url) {
-        this.url = url;
-    }
+    imageUrl() {    }
 
     // Getters & Setters for imageUrl Class
-    public String getImageUrl() {
+    String getImageUrl() {
         return url;
     }
 
-    public void setImageUrl(String url) {
+    void setImageUrl(String url) {
         this.url = url;
     }
 }
