@@ -4,6 +4,7 @@ package satel.adsviewer;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -37,10 +38,12 @@ public class adLogic {
     private static GsonBuilder gsonBuilder = new GsonBuilder();
     private static Gson gson = gsonBuilder.create();
 
+    private static RecyclerView.Adapter adAdapter;
 
     private static List<adBlock> ads;
 
     private static Context context;
+    private static RecyclerView v;
 
 
 
@@ -82,9 +85,7 @@ public class adLogic {
         favoritesView = choice;
     }
 
-    static adBlockRecyclerViewAdapter getAdAdapter(List<adBlock> ads,
-                                                                      Context context,
-                                                                      ProgressBar adLoading) {
+    static adBlockRecyclerViewAdapter getAdAdapter(ProgressBar adLoading) {
         adBlockRecyclerViewAdapter adAdapter = new adBlockRecyclerViewAdapter(ads, context);
         if(!favoritesView) {
             if(favoriteCount(ads) != 0) {
@@ -108,7 +109,7 @@ public class adLogic {
         return adAdapter;
     }
 
-    static void saveState(List<adBlock> ads, Gson gson, Context context) {
+    static void saveState() {
         String adsStringList = gson.toJson(ads);
         SharedPreferences.Editor editor = PreferenceManager
                 .getDefaultSharedPreferences(context).edit();
@@ -117,8 +118,7 @@ public class adLogic {
         editor.commit();
     }
 
-    static void populateAds(Gson gson){
-        List<adBlock> ads;
+    static void populateAds(){
         // First need to check if the ads are stored in local preferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String jsonAdsString = preferences.getString("persistAds", null);
@@ -127,8 +127,7 @@ public class adLogic {
             ads = Arrays.asList(gson.fromJson(jsonAdsString, adBlock[].class));
             toast = Toast.makeText(context, "Ads successfully loaded!", duration);
             toast.show();
-
-            // TODO: UPDATE THE adAdapter
+            updateAdapter();
         }
         else {
             reqQueue = Volley.newRequestQueue(context);
@@ -155,7 +154,7 @@ public class adLogic {
                 ads = Arrays.asList(gson.fromJson(String.valueOf(items), adBlock[].class));
                 toast = Toast.makeText(context, R.string.ads_loaded, duration);
                 toast.show();
-                //TODO: Set view
+                updateAdapter();
             } catch (JSONException e) {
                 toast = Toast.makeText(context, "Ads cannot be loaded", duration);
                 toast.show();
@@ -177,7 +176,9 @@ public class adLogic {
         }
     };
 
-
+    static void setViewAdapter(RecyclerView v) {
+        v.setAdapter(adAdapter);
+    }
 
 
 
@@ -208,12 +209,12 @@ public class adLogic {
         return returnResID;
     }
 
-
-
-
-
     static List<adBlock> getAds(){
         return ads;
+    }
+
+    static void updateAdapter() {
+        adAdapter = new adBlockRecyclerViewAdapter(ads, context);
     }
 
     static void setContext(Context activityContext) {

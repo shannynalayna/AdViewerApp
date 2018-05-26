@@ -43,16 +43,8 @@ import java.util.List;
  */
 public class adActivity extends AppCompatActivity {
 
-    private String remoteJSON;
-    private RequestQueue reqQueue;
-    private Gson gson;
-    private static List<adBlock> ads = new ArrayList<>();
     private ProgressBar adLoading;
-    private Toast toast;
-    private final int duration = Toast.LENGTH_SHORT;
     private RecyclerView adRecyclerView;
-    private RecyclerView.Adapter adAdapter;
-
 
     /**
      * @param menu Option Menu
@@ -68,7 +60,6 @@ public class adActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +68,9 @@ public class adActivity extends AppCompatActivity {
 
         adLogic.setContext(this);
 
-        reqQueue = Volley.newRequestQueue(this);
         adLoading = findViewById(R.id.adProgressBar);
         adLoading.setVisibility(View.VISIBLE);
 
-        remoteJSON = getString(R.string.remoteJSONresource);
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gson = gsonBuilder.create();
 
         adRecyclerView = findViewById(R.id.recyclerViewList);
 
@@ -91,87 +78,16 @@ public class adActivity extends AppCompatActivity {
 
         adRecyclerView.setLayoutManager(adLayoutManager);
 
+        adLogic.populateAds();
 
-        // Check here if shared preferences is empty ?
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String jsonAdsString = preferences.getString("persistAds", null);
-        if(jsonAdsString != null && !jsonAdsString.isEmpty()) {
-
-            ads = Arrays.asList(gson.fromJson(jsonAdsString, adBlock[].class));
-            toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
-            toast.show();
-            setView();
-        }
-        else {
-            fetchAds();
-        }
-
+        adLogic.setViewAdapter(adRecyclerView);
 
     }
-
-    /**
-     * Making request separate from main thread
-     */
-    private void fetchAds() {
-        StringRequest req = new StringRequest(Request.Method.GET, remoteJSON,
-                onAdsLoaded, onAdsError);
-        reqQueue.add(req);
-    }
-
-    private void setView() {
-        adLoading.setVisibility(View.GONE);
-        adAdapter = new adBlockRecyclerViewAdapter(ads, getApplicationContext());
-        adRecyclerView.setAdapter(adAdapter);
-    }
-
-    /**
-     * Listening for a response from the JSON resource, meant to catch any possible errors
-     * when making this connection
-     */
-    private final Response.Listener<String> onAdsLoaded = new Response.Listener<String>() {
-
-        /**
-         * @param resp Response from JSON req
-         */
-        @Override
-        public void onResponse(String resp) {
-            try {
-                //This is where we are making the request to the JSON Object to get the ads
-                JSONObject jsonObj = new JSONObject(resp);
-                JSONArray items = jsonObj.getJSONArray("items");
-                ads = Arrays.asList(gson.fromJson(String.valueOf(items), adBlock[].class));
-
-                Log.i("adActivity", "Ads Successfully Saved!");
-
-                toast = Toast.makeText(getApplicationContext(), R.string.ads_loaded, duration);
-                toast.show();
-                setView();
-            } catch (JSONException e) {
-                toast = Toast.makeText(getApplicationContext(), R.string.fail_ads_loaded, duration);
-                toast.show();
-                Log.e("adActivity", "Error saving ads");
-                e.printStackTrace();
-            }
-        }
-    };
-    private final Response.ErrorListener onAdsError = new Response.ErrorListener() {
-
-        /**
-         * @param err Error getting response
-         */
-        @Override
-        public void onErrorResponse(VolleyError err) {
-            toast = Toast.makeText(getApplicationContext(), R.string.fail_ads_loaded, duration);
-            toast.show();
-            Log.e("adActivityLayout", err.toString());
-        }
-    };
-
 
     @Override
     protected void onPause() {
         super.onPause();
-        adLogic.saveState(ads, gson, this);
+        adLogic.saveState();
     }
 
     /**
@@ -188,8 +104,7 @@ public class adActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_favorite:
                 try {
-                    adRecyclerView.setAdapter(adLogic.getAdAdapter(ads,
-                            getApplicationContext(), adLoading));
+                    adRecyclerView.setAdapter(adLogic.getAdAdapter(adLoading));
                 } catch (Exception e) {
                     Log.e("Menu Item Selected", "Error Displaying Favorite Ads");
                     e.printStackTrace();
